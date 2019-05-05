@@ -32,10 +32,17 @@ export function GestureView() {
     set({ x: index * -100 });
   }, [index]);
 
-  function onEnd(state: StateType) {
-    const [x] = state.delta;
+  function onEnd({ delta, velocity, direction }: StateType) {
+    const [x] = delta;
 
     // 1. If the force is great enough, switch to the next index
+    if (velocity > 0.2 && direction[0] > 0 && index > minIndex) {
+      return setIndex(index - 1);
+    }
+
+    if (velocity > 0.2 && direction[0] < 0 && index < maxIndex) {
+      return setIndex(index + 1);
+    }
 
     // 2. if it's over 50% in either direction, move to it.
     // otherwise, snap back.

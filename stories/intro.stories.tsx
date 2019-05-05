@@ -2,15 +2,22 @@ import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import { GestureView } from "../src";
 
-storiesOf("Hello", module).add("Example", () => (
-  <div>
-    <div>hi</div>
-    <BasicExample />
-  </div>
-));
+storiesOf("Hello", module)
+  .add("Example", () => (
+    <div>
+      <div>hi</div>
+      <BasicExample />
+    </div>
+  ))
+  .add("initial index", () => (
+    <div>
+      <div>hi</div>
+      <BasicExample defaultIndex={1} />
+    </div>
+  ));
 
-function BasicExample() {
-  const [index, setIndex] = React.useState(0);
+function BasicExample({ defaultIndex = 0 }: any) {
+  const [index, setIndex] = React.useState(defaultIndex);
   return (
     <GestureView
       value={index}

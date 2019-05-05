@@ -27,12 +27,17 @@ interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   onRequestChange: (value: number) => void;
 }
 
-export function GestureView({ children, style, ...other }: GestureViewProps) {
-  const [index, setIndex] = React.useState(0);
+export function GestureView({
+  children,
+  value: index,
+  onRequestChange,
+  style,
+  ...other
+}: GestureViewProps) {
   const containerRef = React.useRef(null);
   const { width } = useMeasure(containerRef);
   const initialDirection = React.useRef<"vertical" | "horizontal" | null>(null);
-  const [{ x }, set] = useSpring(() => ({ x: 0 }));
+  const [{ x }, set] = useSpring(() => ({ x: index * -100 }));
 
   // gesture view counts
   const childCount = React.Children.count(children);
@@ -53,11 +58,11 @@ export function GestureView({ children, style, ...other }: GestureViewProps) {
 
     // 1. If the force is great enough, switch to the next index
     if (velocity > 0.2 && direction[0] > 0 && index > minIndex) {
-      return setIndex(index - 1);
+      return onRequestChange(index - 1);
     }
 
     if (velocity > 0.2 && direction[0] < 0 && index < maxIndex) {
-      return setIndex(index + 1);
+      return onRequestChange(index + 1);
     }
 
     // 2. if it's over 50% in either direction, move to it.
@@ -65,9 +70,9 @@ export function GestureView({ children, style, ...other }: GestureViewProps) {
     const threshold = width / 2;
     if (Math.abs(x) > threshold) {
       if (x < 0 && index < maxIndex) {
-        setIndex(index + 1);
+        onRequestChange(index + 1);
       } else if (x > 0 && index > minIndex) {
-        setIndex(index - 1);
+        onRequestChange(index - 1);
       } else {
         set({ x: index * -100 });
       }

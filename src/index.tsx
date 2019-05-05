@@ -104,7 +104,9 @@ export function GestureView() {
           direction: "ltr",
           display: "flex",
           // provide resistance if < 0 or > maxWidth
-          transform: x.interpolate(x => `translateX(${x}%)`)
+          transform: x.interpolate(
+            x => `translateX(${taper(x, maxIndex * -100)}%)`
+          )
         }}
       >
         <div
@@ -171,4 +173,17 @@ function getDirection(initial: [number, number], xy: [number, number]) {
   }
 
   return "vertical";
+}
+
+function taper(x: number, maxWidth: number) {
+  if (x > 0) {
+    return x * 0.3;
+  }
+
+  if (x < maxWidth) {
+    const diff = x - maxWidth;
+    return x - diff * 0.7;
+  }
+
+  return x;
 }

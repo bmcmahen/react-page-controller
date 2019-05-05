@@ -1,6 +1,7 @@
 import * as React from "react";
 import { usePanResponder, StateType } from "pan-responder-hook";
 import { animated, useSpring } from "react-spring";
+import { useMeasure } from "./use-measure";
 
 /**
  * Basic plan:
@@ -20,17 +21,32 @@ import { animated, useSpring } from "react-spring";
  *
  */
 
-export function GestureView() {
+interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  value: number;
+  onRequestChange: (value: number) => void;
+}
+
+export function GestureView({ children, style, ...other }: GestureViewProps) {
   const [index, setIndex] = React.useState(0);
+  const containerRef = React.useRef(null);
+  const { width } = useMeasure(containerRef);
   const initialDirection = React.useRef<"vertical" | "horizontal" | null>(null);
   const [{ x }, set] = useSpring(() => ({ x: 0 }));
-  const width = 250;
-  const maxIndex = 2;
+
+  // gesture view counts
+  const childCount = React.Children.count(children);
+  const maxIndex = childCount - 1;
   const minIndex = 0;
 
+  // if our index changes animate into position
   React.useEffect(() => {
     set({ x: index * -100 });
   }, [index]);
+
+  /**
+   * Gesture end event
+   */
 
   function onEnd({ delta, velocity, direction }: StateType) {
     const [x] = delta;
@@ -46,7 +62,6 @@ export function GestureView() {
 
     // 2. if it's over 50% in either direction, move to it.
     // otherwise, snap back.
-
     const threshold = width / 2;
     if (Math.abs(x) > threshold) {
       if (x < 0 && index < maxIndex) {
@@ -93,56 +108,56 @@ export function GestureView() {
   return (
     <div
       {...bind}
+      ref={containerRef}
+      className="Gesture-view"
       style={{
-        width: "250px",
-        overflow: "hidden"
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        width: "100%",
+        ...style
       }}
+      {...other}
     >
       <animated.div
+        className="Gesture-view__animated-container"
         style={{
           flexDirection: "row",
           direction: "ltr",
+          willChange: "transform",
+          minHeight: 0,
+          flex: 1,
           display: "flex",
-          // provide resistance if < 0 or > maxWidth
           transform: x.interpolate(
             x => `translateX(${taper(x, maxIndex * -100)}%)`
           )
         }}
       >
-        <div
-          style={{
+        {React.Children.map(children, (child, i) => {
+          const styles: React.CSSProperties = {
+            display: "flex",
+            flexDirection: "column",
             width: "100%",
+            alignSelf: "stretch",
             flexShrink: 0,
-            overflow: "auto",
-            minHeight: "400px",
-            background: "yellow"
-          }}
-        >
-          <button onClick={() => setIndex(1)}>next</button>
-        </div>
-        <div
-          style={{
-            width: "100%",
-            flexShrink: 0,
-            overflow: "auto",
-            minHeight: "400px",
-            background: "blue"
-          }}
-        >
-          <button onClick={() => setIndex(2)}>next</button>
-        </div>
+            overflow: "auto"
+          };
 
-        <div
-          style={{
-            width: "100%",
-            flexShrink: 0,
-            overflow: "auto",
-            minHeight: "400px",
-            background: "red"
-          }}
-        >
-          <button onClick={() => setIndex(0)}>next</button>
-        </div>
+          const props = {
+            style: styles,
+            "aria-hidden": i !== index
+          };
+
+          if (typeof child === "function") {
+            return child(props, index === i);
+          }
+
+          return (
+            <div className="Gesture-view__pane" {...props}>
+              {child}
+            </div>
+          );
+        })}
       </animated.div>
     </div>
   );
@@ -174,6 +189,11 @@ function getDirection(initial: [number, number], xy: [number, number]) {
 
   return "vertical";
 }
+
+/**
+ * Add some resistance when swiping in a direction
+ * that doesn't contain another pane
+ */
 
 function taper(x: number, maxWidth: number) {
   if (x > 0) {

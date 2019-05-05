@@ -2,4 +2,81 @@ import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import { GestureView } from "../src";
 
-storiesOf("Hello", module).add("Example", () => <GestureView />);
+storiesOf("Hello", module).add("Example", () => (
+  <div>
+    <div>hi</div>
+    <BasicExample />
+  </div>
+));
+
+function BasicExample() {
+  const [index, setIndex] = React.useState(0);
+  return (
+    <GestureView
+      value={index}
+      onRequestChange={i => setIndex(i)}
+      style={{
+        width: "300px",
+        height: "500px"
+      }}
+    >
+      <div style={{ flex: 1, background: "blue" }}>
+        <RandomContent />
+      </div>
+      <div style={{ flex: 1, background: "yellow" }} />
+      <div style={{ flex: 1, background: "green" }} />
+    </GestureView>
+  );
+}
+
+function RandomContent() {
+  return (
+    <React.Fragment>
+      <p>
+        Sunt consequat officia velit mollit nisi ex ut voluptate. Ipsum mollit
+        fugiat non ipsum ea duis adipisicing duis tempor veniam et anim.
+        Voluptate minim deserunt ipsum laboris duis aliquip consequat velit
+        ipsum deserunt minim sit sint. Cillum aliqua mollit duis sunt minim elit
+        ea laboris esse ipsum proident consequat enim. Deserunt quis ex labore
+        amet officia veniam fugiat. Reprehenderit pariatur cillum consectetur
+        consectetur ut.
+      </p>
+      <p>
+        Sunt consequat officia velit mollit nisi ex ut voluptate. Ipsum mollit
+        fugiat non ipsum ea duis adipisicing duis tempor veniam et anim.
+        Voluptate minim deserunt ipsum laboris duis aliquip consequat velit
+        ipsum deserunt minim sit sint. Cillum aliqua mollit duis sunt minim elit
+        ea laboris esse ipsum proident consequat enim. Deserunt quis ex labore
+        amet officia veniam fugiat. Reprehenderit pariatur cillum consectetur
+        consectetur ut.
+      </p>
+      <p>
+        Sunt consequat officia velit mollit nisi ex ut voluptate. Ipsum mollit
+        fugiat non ipsum ea duis adipisicing duis tempor veniam et anim.
+        Voluptate minim deserunt ipsum laboris duis aliquip consequat velit
+        ipsum deserunt minim sit sint. Cillum aliqua mollit duis sunt minim elit
+        ea laboris esse ipsum proident consequat enim. Deserunt quis ex labore
+        amet officia veniam fugiat. Reprehenderit pariatur cillum consectetur
+        consectetur ut.
+      </p>
+      <p>
+        Sunt consequat officia velit mollit nisi ex ut voluptate. Ipsum mollit
+        fugiat non ipsum ea duis adipisicing duis tempor veniam et anim.
+        Voluptate minim deserunt ipsum laboris duis aliquip consequat velit
+        ipsum deserunt minim sit sint. Cillum aliqua mollit duis sunt minim elit
+        ea laboris esse ipsum proident consequat enim. Deserunt quis ex labore
+        amet officia veniam fugiat. Reprehenderit pariatur cillum consectetur
+        consectetur ut.
+      </p>
+      <p>
+        Sunt consequat officia velit mollit nisi ex ut voluptate. Ipsum mollit
+        fugiat non ipsum ea duis adipisicing duis tempor veniam et anim.
+        Voluptate minim deserunt ipsum laboris duis aliquip consequat velit
+        ipsum deserunt minim sit sint. Cillum aliqua mollit duis sunt minim elit
+        ea laboris esse ipsum proident consequat enim. Deserunt quis ex labore
+        amet officia veniam fugiat. Reprehenderit pariatur cillum consectetur
+        consectetur ut.
+      </p>
+    </React.Fragment>
+  );
+}

@@ -28,9 +28,14 @@ function BasicExample({ defaultIndex = 0 }: any) {
       }}
     >
       <div style={{ flex: 1, background: "blue" }}>
-        <RandomContent />
+        <div>
+          <button onClick={() => setIndex(1)}>next</button>
+          <RandomContent />
+        </div>
       </div>
-      <div style={{ flex: 1, background: "yellow" }} />
+      <div style={{ flex: 1, background: "yellow" }}>
+        <button onClick={() => setIndex(0)}>prev</button>
+      </div>
       <div style={{ flex: 1, background: "green" }} />
     </GestureView>
   );

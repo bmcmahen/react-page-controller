@@ -1,43 +1,38 @@
 import * as React from "react";
 import { usePanResponder, StateType } from "pan-responder-hook";
-import { animated, useSpring } from "react-spring";
+import { animated, useSpring, SpringConfig } from "react-spring";
 import { useMeasure } from "./use-measure";
 
 /**
- * Basic plan:
+ * ReactGestureView
  *
- * Have a primary container which has overflow hidden. Gestures are mapped to this.
- *
- * Have a secondary container which is responsible for animations. It has the attributes:
- * - flexDirection: row
- * - direction: ltr;
- * - display: flex;
- * - willChange: transform;
- * - transform: translate(0%, 0px);
- *
- * - transform related to index: translate(-100%, 0px) (for 1st index)
- *
- * Each child has, width: 100%; flex-shrink: 0; overflow: auto;
- *
+ * Provide views that can be swiped left or right (with touch devices).
  */
 
 interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   value: number;
+  enableMouse?: boolean;
   onRequestChange: (value: number) => void;
+  animationConfig?: SpringConfig;
 }
 
 export function GestureView({
   children,
   value: index,
   onRequestChange,
+  enableMouse = false,
+  animationConfig = { tension: 190, friction: 20, mass: 0.4 },
   style,
   ...other
 }: GestureViewProps) {
   const containerRef = React.useRef(null);
   const { width } = useMeasure(containerRef);
   const initialDirection = React.useRef<"vertical" | "horizontal" | null>(null);
-  const [{ x }, set] = useSpring(() => ({ x: index * -100 }));
+  const [{ x }, set] = useSpring(() => ({
+    x: index * -100,
+    config: animationConfig
+  }));
 
   // gesture view counts
   const childCount = React.Children.count(children);
@@ -82,33 +77,38 @@ export function GestureView({
     }
   }
 
-  const { bind } = usePanResponder({
-    onStartShouldSet: () => {
-      initialDirection.current = null;
-      return false;
-    },
-    onMoveShouldSet: ({ initial, xy }) => {
-      const gestureDirection =
-        initialDirection.current || getDirection(initial, xy);
+  const { bind } = usePanResponder(
+    {
+      onStartShouldSet: () => {
+        initialDirection.current = null;
+        return false;
+      },
+      onMoveShouldSet: ({ initial, xy }) => {
+        const gestureDirection =
+          initialDirection.current || getDirection(initial, xy);
 
-      if (!initialDirection.current) {
-        initialDirection.current = gestureDirection;
-      }
+        if (!initialDirection.current) {
+          initialDirection.current = gestureDirection;
+        }
 
-      return gestureDirection === "horizontal";
-    },
-    onMove: ({ delta }) => {
-      const [x] = delta;
-      const xPos = (x / width) * 100 + index * -100;
+        return gestureDirection === "horizontal";
+      },
+      onMove: ({ delta }) => {
+        const [x] = delta;
+        const xPos = (x / width) * 100 + index * -100;
 
-      set({
-        x: xPos,
-        immediate: true
-      });
+        set({
+          x: xPos,
+          immediate: true
+        });
+      },
+      onRelease: onEnd,
+      onTerminate: onEnd
     },
-    onRelease: onEnd,
-    onTerminate: onEnd
-  });
+    {
+      enableMouse
+    }
+  );
 
   return (
     <div
@@ -145,6 +145,7 @@ export function GestureView({
             width: "100%",
             alignSelf: "stretch",
             flexShrink: 0,
+            WebkitOverflowScrolling: "touch",
             overflow: "auto"
           };
 

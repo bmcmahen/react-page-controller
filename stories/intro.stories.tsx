@@ -14,7 +14,8 @@ storiesOf("Hello", module)
       <div>hi</div>
       <BasicExample defaultIndex={1} />
     </div>
-  ));
+  ))
+  .add("lazy loading", () => <LazyExample />);
 
 function BasicExample({ defaultIndex = 0 }: any) {
   const [index, setIndex] = React.useState(defaultIndex);
@@ -41,7 +42,38 @@ function BasicExample({ defaultIndex = 0 }: any) {
   );
 }
 
+function LazyExample() {
+  const [index, setIndex] = React.useState(0);
+  return (
+    <GestureView
+      lazyLoad
+      value={index}
+      onRequestChange={i => setIndex(i)}
+      style={{
+        width: "300px",
+        height: "500px"
+      }}
+    >
+      <div style={{ flex: 1, background: "blue" }}>
+        <div>
+          <button onClick={() => setIndex(1)}>next</button>
+          <RandomContent />
+        </div>
+      </div>
+      <div style={{ flex: 1, background: "yellow" }}>
+        <button onClick={() => setIndex(0)}>prev</button>
+      </div>
+      <div style={{ flex: 1, background: "green" }}>
+        <RandomContent />
+      </div>
+    </GestureView>
+  );
+}
+
 function RandomContent() {
+  React.useEffect(() => {
+    console.log("mounted!");
+  }, []);
   return (
     <React.Fragment>
       <p>

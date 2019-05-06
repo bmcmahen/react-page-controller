@@ -15,6 +15,7 @@ interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   enableMouse?: boolean;
   onRequestChange: (value: number) => void;
   animationConfig?: SpringConfig;
+  lazyLoad?: boolean;
 }
 
 export function GestureView({
@@ -22,11 +23,13 @@ export function GestureView({
   value: index,
   onRequestChange,
   enableMouse = false,
+  lazyLoad = false,
   animationConfig = { tension: 190, friction: 20, mass: 0.4 },
   style,
   ...other
 }: GestureViewProps) {
   const containerRef = React.useRef(null);
+  const [loaded, setLoaded] = React.useState(() => new Set([index]));
   const { width } = useMeasure(containerRef);
   const initialDirection = React.useRef<"vertical" | "horizontal" | null>(null);
   const [{ x }, set] = useSpring(() => ({
@@ -39,9 +42,28 @@ export function GestureView({
   const maxIndex = childCount - 1;
   const minIndex = 0;
 
+  function isValidNextIndex(index: number) {
+    return index > 0 && index <= maxIndex;
+  }
+
+  function addIndexToLoaded(index: number) {
+    if (!isValidNextIndex(index)) {
+      return;
+    }
+
+    if (loaded.has(index)) {
+      return;
+    }
+
+    const next = new Set(loaded);
+    next.add(index);
+    setLoaded(next);
+  }
+
   // if our index changes animate into position
   React.useEffect(() => {
     set({ x: index * -100 });
+    loaded.add(index);
   }, [index]);
 
   /**
@@ -93,7 +115,7 @@ export function GestureView({
 
         return gestureDirection === "horizontal";
       },
-      onMove: ({ delta }) => {
+      onMove: ({ delta, direction }) => {
         const [x] = delta;
         const xPos = (x / width) * 100 + index * -100;
 
@@ -101,6 +123,9 @@ export function GestureView({
           x: xPos,
           immediate: true
         });
+
+        // potentially lazy load the item we are swiping towards
+        addIndexToLoaded(direction[0] > 0 ? index - 1 : index + 1);
       },
       onRelease: onEnd,
       onTerminate: onEnd
@@ -154,13 +179,15 @@ export function GestureView({
             "aria-hidden": i !== index
           };
 
+          const load = !lazyLoad || index === i || loaded.has(i);
+
           if (typeof child === "function") {
-            return child(props, index === i);
+            return child(props, index === i, load);
           }
 
           return (
             <div className="Gesture-view__pane" {...props}>
-              {child}
+              {load && child}
             </div>
           );
         })}

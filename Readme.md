@@ -9,6 +9,7 @@ React-gesture-view is a react library for providing views that can be swiped lef
 
 - **Built with [pan-responder-hook](https://github.com/bmcmahen/pan-responder-hook) to enable better control over gesture delegation.** This means that you can embed gesture based controls within this gesture view (or embed multiple gesture views within eachother) and delegate between them.
 - **Configurable**. Configure the animation spring, enable mouse support, use child render callbacks, etc.
+- **Optional lazy loading**.
 
 ## Install
 
@@ -44,3 +45,13 @@ function BasicExample({ defaultIndex = 0 }: any) {
   );
 }
 ```
+
+## API
+
+| Name              | Type                     | Default Value                             | Description                               |
+| ----------------- | ------------------------ | ----------------------------------------- | ----------------------------------------- |
+| value\*           | number                   |                                           | The current index to show                 |
+| onRequestChange\* | (value: number) => void; |                                           | A callback for handling index changes     |
+| lazyLoad          | boolean                  | false                                     | Lazy load pane contents                   |
+| enableMouse       | boolean                  | false                                     | By default mouse gestures are not enabled |
+| animationConfig   | SpringConfig             | { tension: 190, friction: 20, mass: 0.4 } | A react-spring config for animations      |

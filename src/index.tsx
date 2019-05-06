@@ -42,9 +42,18 @@ export function GestureView({
   const maxIndex = childCount - 1;
   const minIndex = 0;
 
+  /**
+   * Prevent invalid indexes
+   */
+
   function isValidNextIndex(index: number) {
     return index > 0 && index <= maxIndex;
   }
+
+  /**
+   * We keep a set of indexes that should
+   * be loaded for lazy loading.
+   */
 
   function addIndexToLoaded(index: number) {
     if (!isValidNextIndex(index)) {
@@ -99,6 +108,10 @@ export function GestureView({
     }
   }
 
+  /**
+   * Handle swipe gestures
+   */
+
   const { bind } = usePanResponder(
     {
       onStartShouldSet: () => {
@@ -124,7 +137,7 @@ export function GestureView({
           immediate: true
         });
 
-        // potentially lazy load the item we are swiping towards
+        // lazy load the item we are swiping towards
         addIndexToLoaded(direction[0] > 0 ? index - 1 : index + 1);
       },
       onRelease: onEnd,

@@ -1,13 +1,20 @@
 {
   "name": "react-gesture-view",
   "version": "1.0.0",
-  "description": "",
+  "description": "horizontal, swipeable gesture views for react",
   "main": "cjs/index.js",
   "module": "esm/index.js",
   "typings": "esm/index.d.ts",
-  "author": "",
+  "author": "Ben McMahen <ben.mcmahen@gmail.com>",
   "license": "MIT",
   "private": false,
+  "bugs": {
+    "url": "https://github.com/bmcmahen/react-gesture-view/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bmcmahen/react-gesture-view.git"
+  },
   "scripts": {
     "test": "jest",
     "test-watch": "jest -w",

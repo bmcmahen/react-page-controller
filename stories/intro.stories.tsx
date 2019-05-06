@@ -1,6 +1,6 @@
 import * as React from "react";
 import { storiesOf } from "@storybook/react";
-import { GestureView, CallbackProps } from "../src";
+import GestureView, { CallbackProps, GestureViewHandles } from "../src";
 
 storiesOf("Hello", module)
   .add("Example", () => (
@@ -19,9 +19,15 @@ storiesOf("Hello", module)
 
 function BasicExample({ defaultIndex = 0 }: any) {
   const [index, setIndex] = React.useState(defaultIndex);
-  console.log("WHAT?");
+  const ref = React.useRef<GestureViewHandles>(null);
+
+  React.useEffect(() => {
+    ref.current!.focus();
+  }, []);
+
   return (
     <GestureView
+      ref={ref}
       value={index}
       onRequestChange={i => setIndex(i)}
       style={{
@@ -39,7 +45,6 @@ function BasicExample({ defaultIndex = 0 }: any) {
         <button onClick={() => setIndex(0)}>prev</button>
       </div>
       {(props: CallbackProps, active: boolean) => {
-        console.log(props, active);
         return <div {...props}>Render callback</div>;
       }}
       <div style={{ flex: 1, background: "green" }} />

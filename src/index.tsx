@@ -1,5 +1,5 @@
 import * as React from "react";
-import { usePanResponder, StateType } from "pan-responder-hook";
+import { usePanResponder, StateType, Callbacks } from "pan-responder-hook";
 import { animated, useSpring, SpringConfig } from "react-spring";
 import { useMeasure } from "./use-measure";
 
@@ -16,6 +16,7 @@ export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   onRequestChange: (value: number) => void;
   animationConfig?: SpringConfig;
   lazyLoad?: boolean;
+  onTerminationRequest?: Callbacks["onTerminationRequest"];
 }
 
 export interface GestureViewHandles {
@@ -45,6 +46,7 @@ const GestureView: React.RefForwardingComponent<
     enableMouse = false,
     lazyLoad = false,
     animationConfig = { tension: 190, friction: 20, mass: 0.4 },
+    onTerminationRequest,
     style,
     ...other
   }: GestureViewProps,
@@ -153,6 +155,7 @@ const GestureView: React.RefForwardingComponent<
 
   const { bind } = usePanResponder(
     {
+      onTerminationRequest,
       onStartShouldSet: () => {
         initialDirection.current = null;
         return false;

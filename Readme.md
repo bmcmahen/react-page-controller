@@ -20,27 +20,13 @@ yarn add react-gesture-view
 ## Basic usage
 
 ```jsx
-function BasicExample({ defaultIndex = 0 }: any) {
-  const [index, setIndex] = React.useState(defaultIndex);
+function TabContent() {
+  const [index, setIndex] = React.useState(0);
   return (
-    <GestureView
-      value={index}
-      onRequestChange={i => setIndex(i)}
-      style={{
-        width: "300px",
-        height: "500px"
-      }}
-    >
-      <div style={{ flex: 1, background: "blue" }}>
-        <div>
-          <button onClick={() => setIndex(1)}>next</button>
-          <RandomContent />
-        </div>
-      </div>
-      <div style={{ flex: 1, background: "yellow" }}>
-        <button onClick={() => setIndex(0)}>prev</button>
-      </div>
-      <div style={{ flex: 1, background: "green" }} />
+    <GestureView value={index} onRequestChange={i => setIndex(i)}>
+      <div>First panel</div>
+      <div>Second panel</div>
+      <div>Third panel</div>
     </GestureView>
   );
 }
@@ -55,3 +41,26 @@ function BasicExample({ defaultIndex = 0 }: any) {
 | lazyLoad          | boolean                  | false                                     | Lazy load pane contents                   |
 | enableMouse       | boolean                  | false                                     | By default mouse gestures are not enabled |
 | animationConfig   | SpringConfig             | { tension: 190, friction: 20, mass: 0.4 } | A react-spring config for animations      |
+
+## Imperative API
+
+You can use the imperative API to manually focus the active panel, which is something you'll likely want to do for accessibility reasons.
+
+```jsx
+function TabContent() {
+  const [index, setIndex] = React.useState(0);
+  const ref = React.useRef();
+
+  function focusCurrentIndex() {
+    ref.current.focus();
+  }
+
+  return (
+    <GestureView ref={ref} value={index} onRequestChange={i => setIndex(i)}>
+      <div>First panel</div>
+      <div>Second panel</div>
+      <div>Third panel</div>
+    </GestureView>
+  );
+}
+```

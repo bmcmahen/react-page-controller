@@ -1,6 +1,6 @@
 import * as React from "react";
 import { storiesOf } from "@storybook/react";
-import { GestureView } from "../src";
+import { GestureView, CallbackProps } from "../src";
 
 storiesOf("Hello", module)
   .add("Example", () => (
@@ -19,6 +19,7 @@ storiesOf("Hello", module)
 
 function BasicExample({ defaultIndex = 0 }: any) {
   const [index, setIndex] = React.useState(defaultIndex);
+  console.log("WHAT?");
   return (
     <GestureView
       value={index}
@@ -37,6 +38,10 @@ function BasicExample({ defaultIndex = 0 }: any) {
       <div style={{ flex: 1, background: "yellow" }}>
         <button onClick={() => setIndex(0)}>prev</button>
       </div>
+      {(props: CallbackProps, active: boolean) => {
+        console.log(props, active);
+        return <div {...props}>Render callback</div>;
+      }}
       <div style={{ flex: 1, background: "green" }} />
     </GestureView>
   );

@@ -10,7 +10,7 @@ import { useMeasure } from "./use-measure";
  */
 
 export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
+  children: Array<React.ReactNode | CallbackProps>;
   value: number;
   enableMouse?: boolean;
   onRequestChange: (value: number) => void;
@@ -21,6 +21,18 @@ export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
 export interface GestureViewHandles {
   focus(i?: number): void;
 }
+
+export interface CallbackProps {
+  style: React.CSSProperties;
+  "aria-hidden": boolean;
+  ref: (el: HTMLDivElement | null) => void;
+}
+
+export type GestureViewChildCallback = (
+  props: CallbackProps,
+  active: boolean,
+  load: boolean
+) => React.ReactNode;
 
 export const GestureView: React.RefForwardingComponent<
   GestureViewHandles,
@@ -66,7 +78,7 @@ export const GestureView: React.RefForwardingComponent<
     }));
 
     // gesture view counts
-    const childCount = React.Children.count(children);
+    const childCount = children.length;
     const maxIndex = childCount - 1;
     const minIndex = 0;
 
@@ -207,7 +219,7 @@ export const GestureView: React.RefForwardingComponent<
             )
           }}
         >
-          {React.Children.map(children, (child, i) => {
+          {children.map((child, i) => {
             const styles: React.CSSProperties = {
               display: "flex",
               flexDirection: "column",

@@ -15,9 +15,25 @@ storiesOf("Hello", module)
       <BasicExample defaultIndex={1} />
     </div>
   ))
-  .add("lazy loading", () => <LazyExample />);
+  .add("lazy loading", () => <LazyExample />)
+  .add("Embedded", () => (
+    <BasicExample>
+      <BasicExample
+        style={{
+          height: "300px",
+          overflow: "hidden"
+        }}
+        onTerminationRequest={() => false}
+      />
+    </BasicExample>
+  ));
 
-function BasicExample({ defaultIndex = 0 }: any) {
+function BasicExample({
+  onTerminationRequest,
+  style,
+  defaultIndex = 0,
+  children
+}: any) {
   const [index, setIndex] = React.useState(defaultIndex);
   const ref = React.useRef<GestureViewHandles>(null);
 
@@ -29,10 +45,13 @@ function BasicExample({ defaultIndex = 0 }: any) {
     <GestureView
       ref={ref}
       value={index}
+      onTerminationRequest={onTerminationRequest}
       onRequestChange={i => setIndex(i)}
       style={{
         width: "300px",
-        height: "500px"
+
+        height: "500px",
+        ...style
       }}
     >
       <div style={{ flex: 1, background: "blue" }}>
@@ -47,7 +66,15 @@ function BasicExample({ defaultIndex = 0 }: any) {
       {(props: CallbackProps, active: boolean) => {
         return <div {...props}>Render callback</div>;
       }}
-      <div style={{ flex: 1, background: "green" }} />
+      <div
+        style={{
+          flex: 1,
+          background: "green",
+          paddingTop: "200px"
+        }}
+      >
+        {children}
+      </div>
     </GestureView>
   );
 }

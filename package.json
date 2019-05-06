@@ -59,6 +59,7 @@
     "rollup-plugin-sourcemaps": "^0.4.2",
     "rollup-plugin-typescript2": "^0.20.1",
     "rollup-plugin-uglify": "^6.0.2",
+    "touchable-hook": "^1.1.3",
     "ts-jest": "^24.0.1",
     "typescript": "^3.4.1",
     "webpack": "^4.29.6"

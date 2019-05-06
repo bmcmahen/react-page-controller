@@ -3,32 +3,44 @@ import { storiesOf } from "@storybook/react";
 import GestureView, { CallbackProps, GestureViewHandles } from "../src";
 import { StateType } from "pan-responder-hook";
 
+import { useTouchable } from "touchable-hook";
+
+function TouchableHighlight({ onPress, children }: any) {
+  const { bind, active, hover } = useTouchable({
+    onPress,
+    behavior: "button" // or 'link'
+  });
+
+  return (
+    <div role="button" tabIndex={0} {...bind}>
+      {children}
+    </div>
+  );
+}
+
 storiesOf("Hello", module)
   .add("Example", () => (
     <div>
       <div>hi</div>
-      <BasicExample />
+      <ControlledExample />
     </div>
   ))
   .add("initial index", () => (
     <div>
       <div>hi</div>
-      <BasicExample defaultIndex={1} />
+      <ControlledExample defaultIndex={1} />
     </div>
   ))
   .add("lazy loading", () => <LazyExample />)
-  .add("Embedded", () => (
-    <BasicExample>
-      <BasicExample
-        style={{
-          height: "300px",
-          overflow: "hidden"
-        }}
-        onTerminationRequest={() => false}
-      />
-    </BasicExample>
-  ))
   .add("Embedded with parent takeover", () => <ParentTakeoverExample />);
+
+function ControlledExample({ defaultIndex = 0 }) {
+  const [index, setIndex] = React.useState(defaultIndex);
+
+  return (
+    <BasicExample onRequestChange={(i: number) => setIndex(i)} value={index} />
+  );
+}
 
 function ParentTakeoverExample() {
   const [childIndex, setChildIndex] = React.useState(0);
@@ -89,10 +101,8 @@ function BasicExample({
   id,
   onRequestChange,
   value,
-  defaultIndex = 0,
   children
 }: any) {
-  const [index, setIndex] = React.useState(defaultIndex);
   const ref = React.useRef<GestureViewHandles>(null);
 
   React.useEffect(() => {
@@ -102,25 +112,28 @@ function BasicExample({
   return (
     <GestureView
       ref={ref}
-      value={value || index}
+      value={value}
       id={id}
       onTerminationRequest={onTerminationRequest}
-      onRequestChange={onRequestChange || (i => setIndex(i))}
+      onRequestChange={onRequestChange}
       style={{
         width: "300px",
-
         height: "500px",
         ...style
       }}
     >
       <div style={{ flex: 1, background: "blue" }}>
         <div>
-          <button onClick={() => setIndex(1)}>next</button>
+          <TouchableHighlight onPress={() => onRequestChange(1)}>
+            next
+          </TouchableHighlight>
           <RandomContent />
         </div>
       </div>
       <div style={{ flex: 1, background: "yellow" }}>
-        <button onClick={() => setIndex(0)}>prev</button>
+        <TouchableHighlight onPress={() => onRequestChange(0)}>
+          prev
+        </TouchableHighlight>
       </div>
       {(props: CallbackProps, active: boolean) => {
         return <div {...props}>Render callback</div>;

@@ -41,6 +41,7 @@ const GestureView: React.RefForwardingComponent<
 > = (
   {
     children,
+    id,
     value: index,
     onRequestChange,
     enableMouse = false,
@@ -49,7 +50,7 @@ const GestureView: React.RefForwardingComponent<
     onTerminationRequest,
     style,
     ...other
-  }: GestureViewProps,
+  },
   ref
 ) => {
   const containerRef = React.useRef(null);
@@ -119,20 +120,8 @@ const GestureView: React.RefForwardingComponent<
    * or pan responder termination).
    */
 
-  function onEnd({ delta, velocity, direction }: StateType) {
-    const [x] = delta;
-
-    // 1. If the force is great enough, switch to the previous index
-    if (velocity > 0.2 && direction[0] > 0 && index > minIndex) {
-      return onRequestChange(index - 1);
-    }
-
-    // or the next index, depending on direction
-    if (velocity > 0.2 && direction[0] < 0 && index < maxIndex) {
-      return onRequestChange(index + 1);
-    }
-
-    // 2. if it's over 50% in either direction, move to that index.
+  function releaseToPosition(x: number) {
+    // if it's over 50% in either direction, move to that index.
     // otherwise, snap back to existing index.
     const threshold = width / 2;
     if (Math.abs(x) > threshold) {
@@ -147,6 +136,26 @@ const GestureView: React.RefForwardingComponent<
       // return back!
       set({ x: index * -100 });
     }
+  }
+
+  function onTermination({ delta }: StateType) {
+    releaseToPosition(delta[0]);
+  }
+
+  function onEnd({ delta, velocity, direction }: StateType) {
+    const [x] = delta;
+
+    // 1. If the force is great enough, switch to the previous index
+    if (velocity > 0.2 && direction[0] > 0 && index > minIndex) {
+      return onRequestChange(index - 1);
+    }
+
+    // or the next index, depending on direction
+    if (velocity > 0.2 && direction[0] < 0 && index < maxIndex) {
+      return onRequestChange(index + 1);
+    }
+
+    releaseToPosition(x);
   }
 
   /**
@@ -184,9 +193,10 @@ const GestureView: React.RefForwardingComponent<
         addIndexToLoaded(direction[0] > 0 ? index - 1 : index + 1);
       },
       onRelease: onEnd,
-      onTerminate: onEnd
+      onTerminate: onTermination
     },
     {
+      uid: id,
       enableMouse
     }
   );

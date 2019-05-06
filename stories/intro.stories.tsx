@@ -1,6 +1,7 @@
 import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import GestureView, { CallbackProps, GestureViewHandles } from "../src";
+import { StateType } from "pan-responder-hook";
 
 storiesOf("Hello", module)
   .add("Example", () => (
@@ -26,11 +27,68 @@ storiesOf("Hello", module)
         onTerminationRequest={() => false}
       />
     </BasicExample>
-  ));
+  ))
+  .add("Embedded with parent takeover", () => <ParentTakeoverExample />);
+
+function ParentTakeoverExample() {
+  const [childIndex, setChildIndex] = React.useState(0);
+  const [parentIndex, setParentIndex] = React.useState(0);
+
+  function onParentTerminationRequest({ delta }: StateType) {
+    if (childIndex !== 0) {
+      return true;
+    }
+
+    const [x] = delta;
+
+    if (x < 0) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function onChildTerminationRequest({ delta }: StateType) {
+    if (childIndex > 0) {
+      return false;
+    }
+
+    const [x] = delta;
+
+    if (x < 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  return (
+    <BasicExample
+      value={parentIndex}
+      onRequestChange={(i: number) => setParentIndex(i)}
+      onTerminationRequest={onParentTerminationRequest}
+      id="parent"
+    >
+      <BasicExample
+        id="child"
+        style={{
+          height: "300px",
+          overflow: "hidden"
+        }}
+        value={childIndex}
+        onRequestChange={(i: number) => setChildIndex(i)}
+        onTerminationRequest={onChildTerminationRequest}
+      />
+    </BasicExample>
+  );
+}
 
 function BasicExample({
   onTerminationRequest,
   style,
+  id,
+  onRequestChange,
+  value,
   defaultIndex = 0,
   children
 }: any) {
@@ -44,9 +102,10 @@ function BasicExample({
   return (
     <GestureView
       ref={ref}
-      value={index}
+      value={value || index}
+      id={id}
       onTerminationRequest={onTerminationRequest}
-      onRequestChange={i => setIndex(i)}
+      onRequestChange={onRequestChange || (i => setIndex(i))}
       style={{
         width: "300px",
 

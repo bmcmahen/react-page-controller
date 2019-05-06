@@ -13,8 +13,10 @@ React-gesture-view is a react library for providing views that can be swiped lef
 
 ## Install
 
+Install `react-gesture-view` and its peer dependency `pan-responder-hook` using yarn or npm.
+
 ```
-yarn add react-gesture-view
+yarn add react-gesture-view pan-responder-hook
 ```
 
 ## Basic usage

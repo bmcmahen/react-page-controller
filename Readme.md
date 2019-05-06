@@ -24,6 +24,8 @@ yarn add react-gesture-view pan-responder-hook
 The gesture view should be provided with a collection of children, each representing a panel. By default, each child will be wrapped in an element wiith the recommended props. If you'd rather render the element yourself, provide a render callback for each child instead.
 
 ```jsx
+import GestureView from "react-gesture-view";
+
 function TabContent() {
   const [index, setIndex] = React.useState(0);
   return (

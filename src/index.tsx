@@ -9,7 +9,7 @@ import { useMeasure } from "./use-measure";
  * Provide views that can be swiped left or right (with touch devices).
  */
 
-interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   value: number;
   enableMouse?: boolean;
@@ -18,196 +18,231 @@ interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   lazyLoad?: boolean;
 }
 
-export function GestureView({
-  children,
-  value: index,
-  onRequestChange,
-  enableMouse = false,
-  lazyLoad = false,
-  animationConfig = { tension: 190, friction: 20, mass: 0.4 },
-  style,
-  ...other
-}: GestureViewProps) {
-  const containerRef = React.useRef(null);
-  const [loaded, setLoaded] = React.useState(() => new Set([index]));
-  const { width } = useMeasure(containerRef);
-  const initialDirection = React.useRef<"vertical" | "horizontal" | null>(null);
-  const [{ x }, set] = useSpring(() => ({
-    x: index * -100,
-    config: animationConfig
-  }));
+export interface GestureViewHandles {
+  focus(i?: number): void;
+}
 
-  // gesture view counts
-  const childCount = React.Children.count(children);
-  const maxIndex = childCount - 1;
-  const minIndex = 0;
+export const GestureView: React.RefForwardingComponent<
+  GestureViewHandles,
+  GestureViewProps
+> = React.forwardRef(
+  (
+    {
+      children,
+      value: index,
+      onRequestChange,
+      enableMouse = false,
+      lazyLoad = false,
+      animationConfig = { tension: 190, friction: 20, mass: 0.4 },
+      style,
+      ...other
+    }: GestureViewProps,
+    ref
+  ) => {
+    const containerRef = React.useRef(null);
+    const [loaded, setLoaded] = React.useState(() => new Set([index]));
+    const { width } = useMeasure(containerRef);
+    const initialDirection = React.useRef<"vertical" | "horizontal" | null>(
+      null
+    );
+    const childrenRefs = React.useRef<Map<number, HTMLDivElement | null>>(
+      new Map()
+    );
 
-  /**
-   * Prevent invalid indexes
-   */
+    // expose an imperative focus function which focuses
+    // the currently active index
+    React.useImperativeHandle(ref, () => ({
+      focus: (i?: number) => {
+        const el = childrenRefs.current.get(i || index);
+        if (el) {
+          el.focus();
+        }
+      }
+    }));
 
-  function isValidNextIndex(index: number) {
-    return index > 0 && index <= maxIndex;
-  }
+    const [{ x }, set] = useSpring(() => ({
+      x: index * -100,
+      config: animationConfig
+    }));
 
-  /**
-   * We keep a set of indexes that should
-   * be loaded for lazy loading.
-   */
+    // gesture view counts
+    const childCount = React.Children.count(children);
+    const maxIndex = childCount - 1;
+    const minIndex = 0;
 
-  function addIndexToLoaded(index: number) {
-    if (!isValidNextIndex(index)) {
-      return;
+    /**
+     * Prevent invalid indexes
+     */
+
+    function isValidNextIndex(index: number) {
+      return index > 0 && index <= maxIndex;
     }
 
-    if (loaded.has(index)) {
-      return;
+    /**
+     * We keep a set of indexes that should
+     * be loaded for lazy loading.
+     */
+
+    function addIndexToLoaded(index: number) {
+      if (!isValidNextIndex(index)) {
+        return;
+      }
+
+      if (loaded.has(index)) {
+        return;
+      }
+
+      const next = new Set(loaded);
+      next.add(index);
+      setLoaded(next);
     }
 
-    const next = new Set(loaded);
-    next.add(index);
-    setLoaded(next);
-  }
+    // animate into position if our index changes
+    React.useEffect(() => {
+      set({ x: index * -100 });
+      loaded.add(index);
+    }, [index]);
 
-  // if our index changes animate into position
-  React.useEffect(() => {
-    set({ x: index * -100 });
-    loaded.add(index);
-  }, [index]);
+    /**
+     * Handle gesture end event (either touchend
+     * or pan responder termination).
+     */
 
-  /**
-   * Gesture end event
-   */
+    function onEnd({ delta, velocity, direction }: StateType) {
+      const [x] = delta;
 
-  function onEnd({ delta, velocity, direction }: StateType) {
-    const [x] = delta;
+      // 1. If the force is great enough, switch to the previous index
+      if (velocity > 0.2 && direction[0] > 0 && index > minIndex) {
+        return onRequestChange(index - 1);
+      }
 
-    // 1. If the force is great enough, switch to the next index
-    if (velocity > 0.2 && direction[0] > 0 && index > minIndex) {
-      return onRequestChange(index - 1);
-    }
+      // or the next index, depending on direction
+      if (velocity > 0.2 && direction[0] < 0 && index < maxIndex) {
+        return onRequestChange(index + 1);
+      }
 
-    if (velocity > 0.2 && direction[0] < 0 && index < maxIndex) {
-      return onRequestChange(index + 1);
-    }
-
-    // 2. if it's over 50% in either direction, move to it.
-    // otherwise, snap back.
-    const threshold = width / 2;
-    if (Math.abs(x) > threshold) {
-      if (x < 0 && index < maxIndex) {
-        onRequestChange(index + 1);
-      } else if (x > 0 && index > minIndex) {
-        onRequestChange(index - 1);
+      // 2. if it's over 50% in either direction, move to that index.
+      // otherwise, snap back to existing index.
+      const threshold = width / 2;
+      if (Math.abs(x) > threshold) {
+        if (x < 0 && index < maxIndex) {
+          onRequestChange(index + 1);
+        } else if (x > 0 && index > minIndex) {
+          onRequestChange(index - 1);
+        } else {
+          set({ x: index * -100 });
+        }
       } else {
+        // return back!
         set({ x: index * -100 });
       }
-    } else {
-      // return back!
-      set({ x: index * -100 });
     }
-  }
 
-  /**
-   * Handle swipe gestures
-   */
+    /**
+     * Observe our pan-responder to enable gestures
+     */
 
-  const { bind } = usePanResponder(
-    {
-      onStartShouldSet: () => {
-        initialDirection.current = null;
-        return false;
-      },
-      onMoveShouldSet: ({ initial, xy }) => {
-        const gestureDirection =
-          initialDirection.current || getDirection(initial, xy);
+    const { bind } = usePanResponder(
+      {
+        onStartShouldSet: () => {
+          initialDirection.current = null;
+          return false;
+        },
+        onMoveShouldSet: ({ initial, xy }) => {
+          const gestureDirection =
+            initialDirection.current || getDirection(initial, xy);
 
-        if (!initialDirection.current) {
-          initialDirection.current = gestureDirection;
-        }
-
-        return gestureDirection === "horizontal";
-      },
-      onMove: ({ delta, direction }) => {
-        const [x] = delta;
-        const xPos = (x / width) * 100 + index * -100;
-
-        set({
-          x: xPos,
-          immediate: true
-        });
-
-        // lazy load the item we are swiping towards
-        addIndexToLoaded(direction[0] > 0 ? index - 1 : index + 1);
-      },
-      onRelease: onEnd,
-      onTerminate: onEnd
-    },
-    {
-      enableMouse
-    }
-  );
-
-  return (
-    <div
-      {...bind}
-      ref={containerRef}
-      className="Gesture-view"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        width: "100%",
-        ...style
-      }}
-      {...other}
-    >
-      <animated.div
-        className="Gesture-view__animated-container"
-        style={{
-          flexDirection: "row",
-          direction: "ltr",
-          willChange: "transform",
-          minHeight: 0,
-          flex: 1,
-          display: "flex",
-          transform: x.interpolate(
-            x => `translateX(${taper(x, maxIndex * -100)}%)`
-          )
-        }}
-      >
-        {React.Children.map(children, (child, i) => {
-          const styles: React.CSSProperties = {
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            alignSelf: "stretch",
-            flexShrink: 0,
-            WebkitOverflowScrolling: "touch",
-            overflow: "auto"
-          };
-
-          const props = {
-            style: styles,
-            "aria-hidden": i !== index
-          };
-
-          const load = !lazyLoad || index === i || loaded.has(i);
-
-          if (typeof child === "function") {
-            return child(props, index === i, load);
+          if (!initialDirection.current) {
+            initialDirection.current = gestureDirection;
           }
 
-          return (
-            <div className="Gesture-view__pane" {...props}>
-              {load && child}
-            </div>
-          );
-        })}
-      </animated.div>
-    </div>
-  );
-}
+          // only set when our initial direction is horizontal
+          return gestureDirection === "horizontal";
+        },
+        onMove: ({ delta, direction }) => {
+          const [x] = delta;
+          const xPos = (x / width) * 100 + index * -100;
+
+          set({
+            x: xPos,
+            immediate: true
+          });
+
+          // lazy load the item we are swiping towards
+          addIndexToLoaded(direction[0] > 0 ? index - 1 : index + 1);
+        },
+        onRelease: onEnd,
+        onTerminate: onEnd
+      },
+      {
+        enableMouse
+      }
+    );
+
+    return (
+      <div
+        {...bind}
+        ref={containerRef}
+        className="Gesture-view"
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          width: "100%",
+          ...style
+        }}
+        {...other}
+      >
+        <animated.div
+          className="Gesture-view__animated-container"
+          style={{
+            flexDirection: "row",
+            direction: "ltr",
+            willChange: "transform",
+            minHeight: 0,
+            flex: 1,
+            display: "flex",
+            transform: x.interpolate(
+              x => `translateX(${taper(x, maxIndex * -100)}%)`
+            )
+          }}
+        >
+          {React.Children.map(children, (child, i) => {
+            const styles: React.CSSProperties = {
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              alignSelf: "stretch",
+              flexShrink: 0,
+              WebkitOverflowScrolling: "touch",
+              overflow: "auto"
+            };
+
+            const props = {
+              style: styles,
+              "aria-hidden": i !== index,
+              ref: (el: HTMLDivElement | null) => {
+                childrenRefs.current!.set(i, el);
+              }
+            };
+
+            const load = !lazyLoad || index === i || loaded.has(i);
+
+            if (typeof child === "function") {
+              return child(props, index === i, load);
+            }
+
+            return (
+              <div className="Gesture-view__pane" {...props}>
+                {load && child}
+              </div>
+            );
+          })}
+        </animated.div>
+      </div>
+    );
+  }
+);
 
 /**
  * Compare two positions and determine the direction

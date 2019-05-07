@@ -79,3 +79,57 @@ function TabContent() {
   );
 }
 ```
+
+## Embedding Views
+
+Each GestureView exposes the `react-gesture-responder` `onTerminationRequest` function which allows you to negotiate between gesture views competing for the responder. Typically, you'll want the child view to prevent the parent from claiming the responder.
+
+```jsx
+<GestureView>
+  <div>Left parent pane</div>
+  <GestureView onTerminationRequest={() => false}>
+    <div>child pane</div>
+    <div>another child</div>
+  </GestureView>
+</GestureView>
+```
+
+The logic can become more sophisticated. In the gif at the top of the readme, our parent is permitted takover if the gesture is moving left and the child's first pane is showing. The code will look something like this:
+
+```jsx
+function onParentTerminationRequest({ delta }: StateType) {
+  if (childIndex !== 0) {
+    return true;
+  }
+
+  const [x] = delta;
+
+  if (x < 0) {
+    return true;
+  }
+
+  return false;
+}
+
+function onChildTerminationRequest({ delta }: StateType) {
+  if (childIndex > 0) {
+    return false;
+  }
+
+  const [x] = delta;
+
+  if (x < 0) {
+    return false;
+  }
+
+  return true;
+}
+
+<GestureView onTerminationRequest={onParentTerminationRequest}>
+  <div>Left parent pane</div>
+  <GestureView onTerminationRequest={onChildTerminiationRequest}>
+    <div>child pane</div>
+    <div>another child</div>
+  </GestureView>
+</GestureView>;
+```

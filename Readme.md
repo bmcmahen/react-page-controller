@@ -1,3 +1,9 @@
+<div align="center">
+ <img 
+    max-width="600px"
+    alt="A demo showing views being swiped left and right."
+     src="https://raw.githubusercontent.com/bmcmahen/react-gesture-view/master/demo.gif">
+</div>
 # react-gesture-view
 
 [![npm package](https://img.shields.io/npm/v/react-gesture-view/latest.svg)](https://www.npmjs.com/package/react-gesture-view)

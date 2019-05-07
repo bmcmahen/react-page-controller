@@ -32,7 +32,20 @@ storiesOf("Hello", module)
     </div>
   ))
   .add("lazy loading", () => <LazyExample />)
-  .add("Embedded with parent takeover", () => <ParentTakeoverExample />);
+  .add("Embedded with parent takeover", () => <ParentTakeoverExample />)
+  .add("disable gestures", () => <DisabledExample />);
+
+function DisabledExample({ defaultIndex = 0 }) {
+  const [index, setIndex] = React.useState(defaultIndex);
+
+  return (
+    <BasicExample
+      enableGestures={false}
+      onRequestChange={(i: number) => setIndex(i)}
+      value={index}
+    />
+  );
+}
 
 function ControlledExample({ defaultIndex = 0 }) {
   const [index, setIndex] = React.useState(defaultIndex);
@@ -98,6 +111,7 @@ function ParentTakeoverExample() {
 function BasicExample({
   onTerminationRequest,
   style,
+  enableGestures,
   id,
   onRequestChange,
   value,
@@ -113,6 +127,7 @@ function BasicExample({
     <GestureView
       ref={ref}
       value={value}
+      enableGestures={enableGestures}
       id={id}
       onTerminationRequest={onTerminationRequest}
       onRequestChange={onRequestChange}

@@ -17,6 +17,7 @@ export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   children: Array<React.ReactNode | CallbackProps>;
   value: number;
   enableMouse?: boolean;
+  enableGestures?: boolean;
   onRequestChange: (value: number) => void;
   animationConfig?: SpringConfig;
   lazyLoad?: boolean;
@@ -48,6 +49,7 @@ const GestureView: React.RefForwardingComponent<
     id,
     value: index,
     onRequestChange,
+    enableGestures = true,
     enableMouse = false,
     lazyLoad = false,
     animationConfig = { tension: 190, friction: 20, mass: 0.4 },
@@ -170,10 +172,17 @@ const GestureView: React.RefForwardingComponent<
     {
       onTerminationRequest,
       onStartShouldSet: () => {
+        if (!enableGestures) {
+          return false;
+        }
         initialDirection.current = null;
         return false;
       },
       onMoveShouldSet: ({ initial, xy }) => {
+        if (!enableGestures) {
+          return false;
+        }
+
         const gestureDirection =
           initialDirection.current || getDirection(initial, xy);
 

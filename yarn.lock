@@ -8047,6 +8047,15 @@ react-focus-lock@^1.17.7:
     prop-types "^15.6.2"
     react-clientside-effect "^1.2.0"
 
+react-gesture-responder@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-gesture-responder/-/react-gesture-responder-2.0.0.tgz#abbfee7d77d65f93567415fccad1b80860d2967a"
+  integrity sha512-oWQSq9YQYKRp8KMu10jj3qySvOTOqgEaqcDVwf3rX7gCx4FG2a/BLQBKb3SEZbZP4DbkG5ULk1/dy2jaoR2Vlw==
+  dependencies:
+    "@types/react" "^16.8.10"
+    "@types/react-dom" "^16.8.3"
+    tslib "^1.9.3"
+
 react-helmet-async@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/react-helmet-async/-/react-helmet-async-0.2.0.tgz#d20d8725c1dcdcc95d54e281a1040af47c3abffa"

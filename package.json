@@ -26,9 +26,9 @@
     "prepublishOnly": "yarn run build"
   },
   "peerDependencies": {
-    "pan-responder-hook": "^1.1.4",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "react-gesture-responder": "^2.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
@@ -48,6 +48,7 @@
     "pan-responder-hook": "^1.1.4",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-gesture-responder": "^2.0.0",
     "rimraf": "^2.6.3",
     "rollup": "^1.7.4",
     "rollup-plugin-babel": "^4.3.2",

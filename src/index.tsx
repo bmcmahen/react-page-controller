@@ -1,5 +1,9 @@
 import * as React from "react";
-import { usePanResponder, StateType, Callbacks } from "pan-responder-hook";
+import {
+  useGestureResponder,
+  StateType,
+  Callbacks
+} from "react-gesture-responder";
 import { animated, useSpring, SpringConfig } from "react-spring";
 import { useMeasure } from "./use-measure";
 
@@ -162,7 +166,7 @@ const GestureView: React.RefForwardingComponent<
    * Observe our pan-responder to enable gestures
    */
 
-  const { bind } = usePanResponder(
+  const { bind } = useGestureResponder(
     {
       onTerminationRequest,
       onStartShouldSet: () => {

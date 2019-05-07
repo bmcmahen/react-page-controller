@@ -14,16 +14,16 @@ React-gesture-view is a react library for providing views that can be swiped lef
 
 ## Features
 
-- **Built with [pan-responder-hook](https://github.com/bmcmahen/pan-responder-hook) to enable better control over gesture delegation.** This means that you can embed gesture based controls within this gesture view (or embed multiple gesture views within eachother) and delegate between them.
+- **Built with [react-gesture-responder](https://github.com/bmcmahen/react-gesture-responder) to enable better control over gesture delegation.** This means that you can embed gesture based controls within this gesture view (or embed multiple gesture views within eachother) and delegate between them.
 - **Configurable**. Configure the animation spring, enable mouse support, use child render callbacks, etc.
 - **Optional lazy loading**.
 
 ## Install
 
-Install `react-gesture-view` and its peer dependency `pan-responder-hook` using yarn or npm.
+Install `react-gesture-view` and its peer dependency `react-gesture-responder` using yarn or npm.
 
 ```
-yarn add react-gesture-view pan-responder-hook
+yarn add react-gesture-view react-gesture-responder
 ```
 
 ## Basic usage

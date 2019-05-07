@@ -54,6 +54,7 @@ function TabContent() {
 | onRequestChange\*    | (value: number) => void; |                                           | A callback for handling index changes                                                              |
 | lazyLoad             | boolean                  | false                                     | Lazy load pane contents                                                                            |
 | enableMouse          | boolean                  | false                                     | By default mouse gestures are not enabled                                                          |
+| enableGestures       | boolean                  | true                                      | By default gestures are enabled                                                                    |
 | animationConfig      | SpringConfig             | { tension: 190, friction: 20, mass: 0.4 } | A react-spring config for animations                                                               |
 | onTerminationRequest | (state) => boolean;      |                                           | Optionally prevent parent views from claiming the pan-responder. Useful for embedded gesture views |
 

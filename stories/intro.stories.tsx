@@ -19,6 +19,30 @@ function TouchableHighlight({ onPress, children }: any) {
 }
 
 storiesOf("Hello", module)
+  .add("prevent scroll", () => (
+    <div
+      style={{
+        height: "400px",
+        overflowY: "auto",
+        WebkitOverflowScrolling: "touch",
+        padding: "10px",
+        border: "1px solid black"
+      }}
+    >
+      <GestureView
+        style={{
+          touchAction: "pan-x",
+          height: "600px",
+          width: "300px"
+        }}
+        value={0}
+        onRequestChange={i => console.log(i)}
+      >
+        <div style={{ flex: "1", background: "blue" }}>hello</div>
+        <div>yeaaah</div>
+      </GestureView>
+    </div>
+  ))
   .add("Example", () => (
     <div
       style={{

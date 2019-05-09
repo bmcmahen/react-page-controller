@@ -6,6 +6,7 @@ import {
 } from "react-gesture-responder";
 import { animated, useSpring, SpringConfig } from "react-spring";
 import { useMeasure } from "./use-measure";
+import { RemoveScroll } from "react-remove-scroll";
 
 /**
  * ReactGestureView
@@ -60,6 +61,7 @@ const GestureView: React.RefForwardingComponent<
   ref
 ) => {
   const containerRef = React.useRef(null);
+  const [isDragging, setIsDragging] = React.useState(false);
   const [loaded, setLoaded] = React.useState(() => new Set([index]));
   const { width } = useMeasure(containerRef);
   const initialDirection = React.useRef<"vertical" | "horizontal" | null>(null);
@@ -145,11 +147,13 @@ const GestureView: React.RefForwardingComponent<
   }
 
   function onTermination({ delta }: StateType) {
+    setIsDragging(false);
     releaseToPosition(delta[0]);
   }
 
   function onEnd({ delta, velocity, direction }: StateType) {
     const [x] = delta;
+    setIsDragging(false);
 
     // 1. If the force is great enough, switch to the previous index
     if (velocity > 0.2 && direction[0] > 0 && index > minIndex) {
@@ -193,7 +197,11 @@ const GestureView: React.RefForwardingComponent<
         // only set when our initial direction is horizontal
         return gestureDirection === "horizontal";
       },
-      onMove: ({ delta, direction }) => {
+      onGrant: () => {
+        setIsDragging(true);
+      },
+
+      onMove: ({ delta, direction }, e) => {
         const [x] = delta;
         const xPos = (x / width) * 100 + index * -100;
 
@@ -214,69 +222,78 @@ const GestureView: React.RefForwardingComponent<
     }
   );
 
+  console.log(isDragging);
+
   return (
-    <div
-      {...bind}
-      ref={containerRef}
-      className="Gesture-view"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        width: "100%",
-        ...style
-      }}
-      {...other}
-    >
-      <animated.div
-        className="Gesture-view__animated-container"
+    <React.Fragment>
+      {isDragging && (
+        <RemoveScroll>
+          <div />
+        </RemoveScroll>
+      )}
+      <div
+        {...bind}
+        ref={containerRef}
+        className="Gesture-view"
         style={{
-          flexDirection: "row",
-          direction: "ltr",
-          willChange: "transform",
-          minHeight: 0,
-          flex: 1,
           display: "flex",
-          transform: x.interpolate(
-            x => `translateX(${taper(x, maxIndex * -100)}%)`
-          )
+          flexDirection: "column",
+          overflow: "hidden",
+          width: "100%",
+          ...style
         }}
+        {...other}
       >
-        {children.map((child, i) => {
-          const styles: React.CSSProperties = {
+        <animated.div
+          className="Gesture-view__animated-container"
+          style={{
+            flexDirection: "row",
+            direction: "ltr",
+            willChange: "transform",
+            minHeight: 0,
+            flex: 1,
             display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            alignSelf: "stretch",
-            flexShrink: 0,
-            WebkitOverflowScrolling: "touch",
-            overflow: "auto"
-          };
+            transform: x.interpolate(
+              x => `translateX(${taper(x, maxIndex * -100)}%)`
+            )
+          }}
+        >
+          {children.map((child, i) => {
+            const styles: React.CSSProperties = {
+              display: "flex",
+              flexDirection: "column",
+              width: "100%",
+              alignSelf: "stretch",
+              flexShrink: 0,
+              WebkitOverflowScrolling: "touch",
+              overflow: "auto"
+            };
 
-          const props = {
-            key: i,
-            tabIndex: index === i ? 0 : -1,
-            style: styles,
-            "aria-hidden": i !== index,
-            ref: (el: HTMLDivElement | null) => {
-              childrenRefs.current!.set(i, el);
+            const props = {
+              key: i,
+              tabIndex: index === i ? 0 : -1,
+              style: styles,
+              "aria-hidden": i !== index,
+              ref: (el: HTMLDivElement | null) => {
+                childrenRefs.current!.set(i, el);
+              }
+            };
+
+            const load = !lazyLoad || index === i || loaded.has(i);
+
+            if (typeof child === "function") {
+              return child(props, index === i, load);
             }
-          };
 
-          const load = !lazyLoad || index === i || loaded.has(i);
-
-          if (typeof child === "function") {
-            return child(props, index === i, load);
-          }
-
-          return (
-            <div className="Gesture-view__pane" {...props}>
-              {load && child}
-            </div>
-          );
-        })}
-      </animated.div>
-    </div>
+            return (
+              <div className="Gesture-view__pane" {...props}>
+                {load && child}
+              </div>
+            );
+          })}
+        </animated.div>
+      </div>
+    </React.Fragment>
   );
 };
 

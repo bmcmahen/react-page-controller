@@ -20,7 +20,12 @@ function TouchableHighlight({ onPress, children }: any) {
 
 storiesOf("Hello", module)
   .add("Example", () => (
-    <div>
+    <div
+      style={{
+        height: "400px",
+        overflowY: "auto"
+      }}
+    >
       <div>hi</div>
       <ControlledExample />
     </div>

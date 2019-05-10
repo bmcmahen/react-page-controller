@@ -24,6 +24,7 @@ export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   animationConfig?: SpringConfig;
   lazyLoad?: boolean;
   onTerminationRequest?: Callbacks["onTerminationRequest"];
+  /** Optionally override onMoveShouldSet defaults */
   onMoveShouldSet?: (
     state: StateType,
     e: ResponderEvent,
@@ -208,7 +209,7 @@ const GestureView: React.RefForwardingComponent<
         // allow the user to tap into this component to potentially
         // override it
         if (onMoveShouldSet) {
-          onMoveShouldSet(state, e, set);
+          return onMoveShouldSet(state, e, set);
         }
 
         return set;

@@ -4,6 +4,7 @@ import GestureView, { CallbackProps, GestureViewHandles } from "../src";
 import { StateType } from "pan-responder-hook";
 
 import { useTouchable } from "touchable-hook";
+import { IOS } from "./iphone";
 
 function TouchableHighlight({ onPress, children }: any) {
   const { bind, active, hover } = useTouchable({
@@ -35,6 +36,7 @@ storiesOf("Hello", module)
           height: "600px",
           width: "300px"
         }}
+        enableMouse
         value={0}
         onRequestChange={i => console.log(i)}
       >
@@ -62,7 +64,8 @@ storiesOf("Hello", module)
   ))
   .add("lazy loading", () => <LazyExample />)
   .add("Embedded with parent takeover", () => <ParentTakeoverExample />)
-  .add("disable gestures", () => <DisabledExample />);
+  .add("disable gestures", () => <DisabledExample />)
+  .add("iphone example", () => <IOS />);
 
 function DisabledExample({ defaultIndex = 0 }) {
   const [index, setIndex] = React.useState(defaultIndex);
@@ -223,7 +226,7 @@ function LazyExample() {
   );
 }
 
-function RandomContent() {
+export function RandomContent() {
   React.useEffect(() => {
     console.log("mounted!");
   }, []);

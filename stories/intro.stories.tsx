@@ -4,6 +4,7 @@ import GestureView, { CallbackProps, GestureViewHandles } from "../src";
 import { StateType } from "pan-responder-hook";
 
 import { useTouchable } from "touchable-hook";
+import { IOS } from "./iphone";
 
 function TouchableHighlight({ onPress, children }: any) {
   const { bind, active, hover } = useTouchable({
@@ -19,8 +20,38 @@ function TouchableHighlight({ onPress, children }: any) {
 }
 
 storiesOf("Hello", module)
+  .add("prevent scroll", () => (
+    <div
+      style={{
+        height: "400px",
+        overflowY: "auto",
+        WebkitOverflowScrolling: "touch",
+        padding: "10px",
+        border: "1px solid black"
+      }}
+    >
+      <GestureView
+        style={{
+          touchAction: "pan-x",
+          height: "600px",
+          width: "300px"
+        }}
+        enableMouse
+        value={0}
+        onRequestChange={i => console.log(i)}
+      >
+        <div style={{ flex: "1", background: "blue" }}>hello</div>
+        <div>yeaaah</div>
+      </GestureView>
+    </div>
+  ))
   .add("Example", () => (
-    <div>
+    <div
+      style={{
+        height: "400px",
+        overflowY: "auto"
+      }}
+    >
       <div>hi</div>
       <ControlledExample />
     </div>
@@ -33,7 +64,8 @@ storiesOf("Hello", module)
   ))
   .add("lazy loading", () => <LazyExample />)
   .add("Embedded with parent takeover", () => <ParentTakeoverExample />)
-  .add("disable gestures", () => <DisabledExample />);
+  .add("disable gestures", () => <DisabledExample />)
+  .add("iphone example", () => <IOS />);
 
 function DisabledExample({ defaultIndex = 0 }) {
   const [index, setIndex] = React.useState(defaultIndex);
@@ -194,7 +226,7 @@ function LazyExample() {
   );
 }
 
-function RandomContent() {
+export function RandomContent() {
   React.useEffect(() => {
     console.log("mounted!");
   }, []);

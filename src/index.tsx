@@ -2,7 +2,8 @@ import * as React from "react";
 import {
   useGestureResponder,
   StateType,
-  Callbacks
+  Callbacks,
+  ResponderEvent
 } from "react-gesture-responder";
 import { animated, useSpring, SpringConfig } from "react-spring";
 import { useMeasure } from "./use-measure";
@@ -23,6 +24,11 @@ export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   animationConfig?: SpringConfig;
   lazyLoad?: boolean;
   onTerminationRequest?: Callbacks["onTerminationRequest"];
+  onMoveShouldSet?: (
+    state: StateType,
+    e: ResponderEvent,
+    suggested: boolean
+  ) => boolean;
 }
 
 export interface GestureViewHandles {
@@ -55,6 +61,7 @@ const GestureView: React.RefForwardingComponent<
     lazyLoad = false,
     animationConfig = { tension: 190, friction: 20, mass: 0.4 },
     onTerminationRequest,
+    onMoveShouldSet,
     style,
     ...other
   },
@@ -182,7 +189,8 @@ const GestureView: React.RefForwardingComponent<
         initialDirection.current = null;
         return false;
       },
-      onMoveShouldSet: ({ initial, xy }) => {
+      onMoveShouldSet: (state, e) => {
+        const { initial, xy } = state;
         if (!enableGestures) {
           return false;
         }
@@ -195,13 +203,20 @@ const GestureView: React.RefForwardingComponent<
         }
 
         // only set when our initial direction is horizontal
-        return gestureDirection === "horizontal";
+        const set = gestureDirection === "horizontal";
+
+        // allow the user to tap into this component to potentially
+        // override it
+        if (onMoveShouldSet) {
+          onMoveShouldSet(state, e, set);
+        }
+
+        return set;
       },
       onGrant: () => {
         setIsDragging(true);
       },
-
-      onMove: ({ delta, direction }, e) => {
+      onMove: ({ delta, direction }) => {
         const [x] = delta;
         const xPos = (x / width) * 100 + index * -100;
 
@@ -221,8 +236,6 @@ const GestureView: React.RefForwardingComponent<
       enableMouse
     }
   );
-
-  console.log(isDragging);
 
   return (
     <React.Fragment>

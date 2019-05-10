@@ -41,6 +41,7 @@ export function IOS() {
           <Box color="blue" />
           <Box color="yellow" />
         </GestureView>
+        <Dots count={3} active={childIndex} />
         <div style={{ height: "40px", background: "black" }}>dock</div>
       </div>
     </GestureView>
@@ -57,6 +58,42 @@ function Box({ color = "blue" }: any) {
       sint voluptate sint excepteur minim Lorem pariatur ad fugiat consequat.
       Exercitation pariatur ex dolore incididunt culpa culpa cupidatat Lorem
       occaecat cillum occaecat irure amet proident.
+    </div>
+  );
+}
+
+function Dots({ count, active }: any) {
+  return (
+    <div
+      style={{
+        justifyContent: "center",
+        pointerEvents: "none",
+        display: "flex"
+      }}
+    >
+      <div
+        style={{
+          width: "10px",
+          height: "10px",
+          margin: "5px",
+          borderRadius: "50%",
+          background: "#ddd"
+        }}
+      />
+      {Array.from(new Array(count)).map((v, i) => {
+        return (
+          <div
+            key={i}
+            style={{
+              width: "10px",
+              height: "10px",
+              margin: "5px",
+              borderRadius: "50%",
+              background: active === i ? "blue" : "#ddd"
+            }}
+          />
+        );
+      })}
     </div>
   );
 }

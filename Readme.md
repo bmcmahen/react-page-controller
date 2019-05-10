@@ -48,15 +48,17 @@ function TabContent() {
 
 ## API
 
-| Name                 | Type                     | Default Value                             | Description                                                                                        |
-| -------------------- | ------------------------ | ----------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| value\*              | number                   |                                           | The current index to show                                                                          |
-| onRequestChange\*    | (value: number) => void; |                                           | A callback for handling index changes                                                              |
-| lazyLoad             | boolean                  | false                                     | Lazy load pane contents                                                                            |
-| enableMouse          | boolean                  | false                                     | By default mouse gestures are not enabled                                                          |
-| enableGestures       | boolean                  | true                                      | By default gestures are enabled                                                                    |
-| animationConfig      | SpringConfig             | { tension: 190, friction: 20, mass: 0.4 } | A react-spring config for animations                                                               |
-| onTerminationRequest | (state) => boolean;      |                                           | Optionally prevent parent views from claiming the pan-responder. Useful for embedded gesture views |
+| Name                 | Type                              | Default Value                             | Description                                                                                             |
+| -------------------- | --------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| value\*              | number                            |                                           | The current index to show                                                                               |
+| onRequestChange\*    | (value: number) => void;          |                                           | A callback for handling index changes                                                                   |
+| lazyLoad             | boolean                           | false                                     | Lazy load pane contents                                                                                 |
+| enableMouse          | boolean                           | false                                     | By default mouse gestures are not enabled                                                               |
+| enableGestures       | boolean                           | true                                      | By default gestures are enabled                                                                         |
+| animationConfig      | SpringConfig                      | { tension: 190, friction: 20, mass: 0.4 } | A react-spring config for animations                                                                    |
+| onTerminationRequest | (state) => boolean;               |                                           | Optionally prevent parent views from claiming the pan-responder. Useful for embedded gesture views      |
+| onMoveShouldSet      | (state, e, suggested) => boolean; |                                           | Optionally override the default onMoveShouldSet behaviour. Useful for embedding multiple gesture views. |
+| enableScrollLock     | boolean                           | true                                      | Lock all page scrolling when making swiping gestures. This is generally the desired behaviour.          |
 
 ## Imperative API
 
@@ -95,40 +97,38 @@ Each GestureView exposes the `react-gesture-responder` `onTerminationRequest` fu
 </GestureView>
 ```
 
-The logic can become more sophisticated. In the gif at the top of the readme, our parent is permitted takover if the gesture is moving left and the child's first pane is showing. The code will look something like this:
+The logic can become more sophisticated. In the gif at the top of the readme, our parent claims the responder (and prevents the child from stealing it) when showing the first child pane and moving left. The code will look something like this:
 
 ```jsx
-function onParentTerminationRequest({ delta }: StateType) {
-  if (childIndex !== 0) {
-    return true;
-  }
+const [childIndex, setChildIndex] = React.useState(0);
+const [parentIndex, setParentIndex] = React.useState(0);
 
-  const [x] = delta;
-
-  if (x < 0) {
-    return true;
+function onMoveShouldSet(state, e, suggested) {
+  if (suggested) {
+    if (parentIndex === 0 || (state.delta[0] > 0 && childIndex === 0)) {
+      return true;
+    }
   }
 
   return false;
 }
 
-function onChildTerminationRequest({ delta }: StateType) {
-  if (childIndex > 0) {
-    return false;
-  }
-
-  const [x] = delta;
-
-  if (x < 0) {
+function onTerminationRequest(state) {
+  if (state.delta[0] > 0 && childIndex === 0) {
     return false;
   }
 
   return true;
 }
 
-<GestureView onTerminationRequest={onParentTerminationRequest}>
+<GestureView
+  onMoveShouldSet={onMoveShouldSet}
+  onTerminationRequest={onTerminationRequest}
+  value={parentIndex}
+  onRequestChange={i => setParentIndex(i)}
+>
   <div>Left parent pane</div>
-  <GestureView onTerminationRequest={onChildTerminiationRequest}>
+  <GestureView value={childIndex} onRequestChange={i => setChildIndex(i)}>
     <div>child pane</div>
     <div>another child</div>
   </GestureView>

@@ -20,6 +20,7 @@ export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
   enableMouse?: boolean;
   enableGestures?: boolean;
+  enableScrollLock?: boolean;
   onRequestChange: (value: number) => void;
   animationConfig?: SpringConfig;
   lazyLoad?: boolean;
@@ -57,6 +58,7 @@ const GestureView: React.RefForwardingComponent<
     id,
     value: index,
     onRequestChange,
+    enableScrollLock = true,
     enableGestures = true,
     enableMouse = false,
     lazyLoad = false,
@@ -240,7 +242,7 @@ const GestureView: React.RefForwardingComponent<
 
   return (
     <React.Fragment>
-      {isDragging && (
+      {isDragging && enableScrollLock && (
         <RemoveScroll>
           <div />
         </RemoveScroll>

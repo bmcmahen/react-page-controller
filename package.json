@@ -44,6 +44,7 @@
     "babel-loader": "^8.0.5",
     "babel-plugin-require-context-hook": "^1.0.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "classnames": "^2.2.6",
     "jest": "^24.5.0",
     "pan-responder-hook": "^1.1.4",
     "react": "^16.8.6",
@@ -66,10 +67,11 @@
     "webpack": "^4.29.6"
   },
   "dependencies": {
+    "@types/classnames": "^2.2.7",
     "@types/react": "^16.8.10",
     "@types/react-dom": "^16.8.3",
     "react-remove-scroll": "^1.0.8",
-    "react-spring": "^9.0.0-beta.5",
+    "react-spring": "^9.0.0-beta.8",
     "resize-observer-polyfill": "^1.5.1",
     "tslib": "^1.9.3"
   },

@@ -4,7 +4,7 @@ import GestureView, { CallbackProps, GestureViewHandles } from "../src";
 import { StateType } from "pan-responder-hook";
 
 import { useTouchable } from "touchable-hook";
-import { IOS } from "./iphone";
+import { IOS } from "./iOS";
 
 function TouchableHighlight({ onPress, children }: any) {
   const { bind, active, hover } = useTouchable({

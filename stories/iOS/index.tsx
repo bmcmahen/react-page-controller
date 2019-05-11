@@ -6,6 +6,7 @@ import { Dots } from "./Dots";
 import "./styles.css";
 import { Dock } from "./Dock";
 import { IconGrid } from "./IconGrid";
+import { Status } from "./Status";
 
 export function IOS() {
   const [childIndex, setChildIndex] = React.useState(0);
@@ -45,6 +46,17 @@ export function IOS() {
     >
       <Pane>widget crap</Pane>
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            boxSizing: "border-box",
+            top: 0,
+            padding: "1.25rem"
+          }}
+        >
+          <Status />
+        </div>
         <GestureView
           className="Gesture__apps"
           id="child"

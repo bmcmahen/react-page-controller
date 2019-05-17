@@ -5,6 +5,9 @@ import { StateType } from "pan-responder-hook";
 
 import { useTouchable } from "touchable-hook";
 import { IOS } from "./iOS";
+import { ImagesExample } from "./Images-example";
+import { ScrollingExample } from "./Scrolling-example";
+import { FilterExample } from "./Filter-example";
 
 function TouchableHighlight({ onPress, children }: any) {
   const { bind, active, hover } = useTouchable({
@@ -19,53 +22,15 @@ function TouchableHighlight({ onPress, children }: any) {
   );
 }
 
-storiesOf("Hello", module)
-  .add("prevent scroll", () => (
-    <div
-      style={{
-        height: "400px",
-        overflowY: "auto",
-        WebkitOverflowScrolling: "touch",
-        padding: "10px",
-        border: "1px solid black"
-      }}
-    >
-      <GestureView
-        style={{
-          touchAction: "pan-x",
-          height: "600px",
-          width: "300px"
-        }}
-        enableMouse
-        value={0}
-        onRequestChange={i => console.log(i)}
-      >
-        <div style={{ flex: "1", background: "blue" }}>hello</div>
-        <div>yeaaah</div>
-      </GestureView>
-    </div>
-  ))
-  .add("Example", () => (
-    <div
-      style={{
-        height: "400px",
-        overflowY: "auto"
-      }}
-    >
-      <div>hi</div>
-      <ControlledExample />
-    </div>
-  ))
-  .add("initial index", () => (
-    <div>
-      <div>hi</div>
-      <ControlledExample defaultIndex={1} />
-    </div>
-  ))
+storiesOf("react-gesture-view", module)
+  .add("basic usage", () => <ControlledExample />)
+  .add("initial index", () => <ControlledExample defaultIndex={1} />)
   .add("lazy loading", () => <LazyExample />)
-  .add("Embedded with parent takeover", () => <ParentTakeoverExample />)
   .add("disable gestures", () => <DisabledExample />)
-  .add("iphone example", () => <IOS />);
+  .add("iphone example", () => <IOS />)
+  .add("images example", () => <ImagesExample />)
+  .add("scrolling example", () => <ScrollingExample />)
+  .add("filtering null children", () => <FilterExample />);
 
 function DisabledExample({ defaultIndex = 0 }) {
   const [index, setIndex] = React.useState(defaultIndex);
@@ -160,12 +125,13 @@ function BasicExample({
       ref={ref}
       value={value}
       enableGestures={enableGestures}
+      enableMouse
       id={id}
       onTerminationRequest={onTerminationRequest}
       onRequestChange={onRequestChange}
       style={{
         width: "300px",
-        height: "500px",
+        height: "100%",
         ...style
       }}
     >

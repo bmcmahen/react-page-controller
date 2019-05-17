@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60px" height="76px" viewBox="0 0 60 76" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>iBooks</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#FFA700" offset="0%"></stop>
+            <stop stop-color="#F9661E" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Home" transform="translate(-202.000000, -292.000000)">
+            <g id="iBooks" transform="translate(202.000000, 292.000000)">
+                <text font-family="Helvetica" font-size="12" font-weight="normal" fill="#FFFFFF">
+                    <tspan x="11" y="75">iBooks</tspan>
+                </text>
+                <g id="iBooks-icon">
+                    <g id="iBooks-Icon">
+                        <path d="M39.0815,0 C45.105,0 48.116,0 51.3585,1.025 C54.8985,2.3135 57.6865,5.1015 58.975,8.6415 C60,11.8835 60,14.8955 60,20.9185 L60,39.0815 C60,45.105 60,48.116 58.975,51.3585 C57.6865,54.8985 54.8985,57.6865 51.3585,58.9745 C48.116,60 45.105,60 39.0815,60 L20.9185,60 C14.895,60 11.8835,60 8.6415,58.9745 C5.1015,57.6865 2.3135,54.8985 1.025,51.3585 C0,48.116 0,45.105 0,39.0815 L0,20.9185 C0,14.8955 0,11.8835 1.025,8.6415 C2.3135,5.1015 5.1015,2.3135 8.6415,1.025 C11.8835,0 14.895,0 20.9185,0 L39.0815,0 Z" id="Background" fill="url(#linearGradient-1)"></path>
+                        <path d="M10,18.5 C10,18.5 11.9501953,13.5 19.7126465,13.5 C27.4750977,13.5 29.5,20 29.5,20 L29.5,48 C29.5,48 27.0182292,40.5 19.7773438,40.5 C14.5364583,40.5 10.7788644,43.8837661 10.7788644,43.8837661 C10.3487095,44.2241027 10,44.0487213 10,43.4967004 L10,18.5 Z M50,18.5 L50,43.4967004 C50,44.0487213 49.6512905,44.2241027 49.2211356,43.8837661 C49.2211356,43.8837661 45.4635417,40.5 40.2226563,40.5 C32.9817708,40.5 30.5,48 30.5,48 L30.5,20 C30.5,20 32.5249023,13.5 40.2873535,13.5 C48.0498047,13.5 50,18.5 50,18.5 Z" id="Icon" fill="#FFFFFF"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

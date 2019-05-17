@@ -1,8 +1,11 @@
-.Gesture__parent {
+.IOS {
   height: 700px;
   border-radius: 2.5rem;
   overflow: hidden;
   width: 375px !important;
+}
+.Gesture__parent {
+  height: 100%;
   background-image: url(https://images.unsplash.com/photo-1557474295-8fbaa04b4fee?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80);
   background-size: cover;
 }

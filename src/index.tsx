@@ -24,6 +24,7 @@ export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   onRequestChange: (value: number) => void;
   animationConfig?: SpringConfig;
   lazyLoad?: boolean;
+  onSetLazy?: (suggestedIndex: number) => number[];
   onTerminationRequest?: Callbacks["onTerminationRequest"];
   /** Optionally override onMoveShouldSet defaults */
   onMoveShouldSet?: (
@@ -62,6 +63,7 @@ const GestureView: React.RefForwardingComponent<
     enableGestures = true,
     enableMouse = false,
     lazyLoad = false,
+    onSetLazy,
     animationConfig = { tension: 190, friction: 20, mass: 0.4 },
     onTerminationRequest,
     onMoveShouldSet,
@@ -72,7 +74,9 @@ const GestureView: React.RefForwardingComponent<
 ) => {
   const containerRef = React.useRef(null);
   const [isDragging, setIsDragging] = React.useState(false);
-  const [loaded, setLoaded] = React.useState(() => new Set([index]));
+  const [loaded, setLoaded] = React.useState(
+    () => new Set(onSetLazy ? onSetLazy(index) : [index])
+  );
   const { width } = useMeasure(containerRef);
   const initialDirection = React.useRef<"vertical" | "horizontal" | null>(null);
   const childrenRefs = React.useRef<Map<number, HTMLDivElement | null>>(
@@ -95,8 +99,10 @@ const GestureView: React.RefForwardingComponent<
     config: animationConfig
   }));
 
+  const renderableChildren = children.filter(child => child !== null);
+
   // gesture view counts
-  const childCount = children.length;
+  const childCount = renderableChildren.length;
   const maxIndex = childCount - 1;
   const minIndex = 0;
 
@@ -118,12 +124,25 @@ const GestureView: React.RefForwardingComponent<
       return;
     }
 
-    if (loaded.has(index)) {
-      return;
+    let indexes: number | number[] = index;
+
+    // allow the user to customize which indexes to load
+    if (onSetLazy) {
+      indexes = onSetLazy(index);
     }
 
+    const indexesArray = Array.isArray(indexes) ? indexes : [indexes];
     const next = new Set(loaded);
-    next.add(index);
+
+    indexesArray.forEach(i => {
+      // don't set items which are already loaded or are invalid
+      if (loaded.has(i) || !isValidNextIndex(index)) {
+        return;
+      }
+
+      next.add(i);
+    });
+
     setLoaded(next);
   }
 
@@ -274,15 +293,16 @@ const GestureView: React.RefForwardingComponent<
             )
           }}
         >
-          {children.map((child, i) => {
+          {renderableChildren.map((child, i) => {
             const styles: React.CSSProperties = {
               display: "flex",
               flexDirection: "column",
               width: "100%",
               alignSelf: "stretch",
+              justifyContent: "flex-start",
               flexShrink: 0,
-              WebkitOverflowScrolling: "touch",
-              overflow: "auto"
+              height: "100%",
+              overflow: "hidden"
             };
 
             const props = {

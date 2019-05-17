@@ -35,44 +35,46 @@ export function IOS() {
   }
 
   return (
-    <GestureView
-      className="Gesture__parent"
-      enableMouse
-      value={parentIndex}
-      id="parent"
-      onRequestChange={i => setParentIndex(i)}
-      onMoveShouldSet={onMoveShouldSetParent}
-      onTerminationRequest={onTerminationRequestParent}
-    >
-      <Pane>widget crap</Pane>
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <div
-          style={{
-            position: "absolute",
-            width: "100%",
-            boxSizing: "border-box",
-            top: 0,
-            padding: "1.25rem"
-          }}
-        >
-          <Status />
-        </div>
-        <GestureView
-          className="Gesture__apps"
-          id="child"
-          enableMouse
-          value={childIndex}
-          onRequestChange={i => setChildIndex(i)}
-        >
-          <Pane>
-            <IconGrid />
-          </Pane>
-          <Pane>2</Pane>
-          <Pane>3</Pane>
-        </GestureView>
-        <Dots count={3} activeIndex={childIndex} />
-        <Dock />
+    <div className="IOS" style={{ position: "relative" }}>
+      <div
+        style={{
+          position: "absolute",
+          width: "100%",
+          boxSizing: "border-box",
+          top: 0,
+          padding: "1.35rem"
+        }}
+      >
+        <Status />
       </div>
-    </GestureView>
+      <GestureView
+        className="Gesture__parent"
+        enableMouse
+        value={parentIndex}
+        id="parent"
+        onRequestChange={i => setParentIndex(i)}
+        onMoveShouldSet={onMoveShouldSetParent}
+        onTerminationRequest={onTerminationRequestParent}
+      >
+        <Pane>widget crap</Pane>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+          <GestureView
+            className="Gesture__apps"
+            id="child"
+            enableMouse
+            value={childIndex}
+            onRequestChange={i => setChildIndex(i)}
+          >
+            <Pane>
+              <IconGrid />
+            </Pane>
+            <Pane>2</Pane>
+            <Pane>3</Pane>
+          </GestureView>
+          <Dots count={3} activeIndex={childIndex} />
+          <Dock />
+        </div>
+      </GestureView>
+    </div>
   );
 }

@@ -7,26 +7,38 @@ import {
 } from "react-gesture-responder";
 import clamp from "lodash-es/clamp";
 import swap from "./move";
+import {
+  IconCalculator,
+  IconWeather,
+  IconFaceTime,
+  IconSettings
+} from "./icons";
 
 interface ItemType {
   name: string;
+  icon: any;
 }
 
 const griditems: Array<ItemType> = [
   {
-    name: "Ben"
+    name: "Ben",
+    icon: IconCalculator
   },
   {
-    name: "Joe"
+    name: "Joe",
+    icon: IconWeather
   },
   {
-    name: "Ken"
+    name: "Ken",
+    icon: IconFaceTime
   },
   {
-    name: "Rod"
+    name: "Rod",
+    icon: IconWeather
   },
   {
-    name: "Bob"
+    name: "Bob",
+    icon: IconWeather
   }
 ];
 
@@ -52,7 +64,7 @@ export function IconGrid() {
       style={{
         position: "relative",
         zIndex: 10,
-        padding: "0.5rem",
+        padding: "0.75rem",
         paddingTop: "50px"
       }}
     >
@@ -114,8 +126,9 @@ interface ItemProps {
   onEnd: (state: StateType) => void;
 }
 
-function Icon({ styles, item, onMove, onEnd }: ItemProps) {
+function Icon({ styles, item: { name, icon }, onMove, onEnd }: ItemProps) {
   const dragging = React.useRef(false);
+  const Icon = icon;
 
   const { bind } = useGestureResponder(
     {
@@ -152,7 +165,7 @@ function Icon({ styles, item, onMove, onEnd }: ItemProps) {
     <animated.div
       {...bind}
       style={{
-        padding: "0.5rem",
+        padding: "0.75rem",
         width: styles.width,
         height: styles.height,
         zIndex: styles.zIndex,
@@ -167,13 +180,15 @@ function Icon({ styles, item, onMove, onEnd }: ItemProps) {
     >
       <div
         style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           boxSizing: "border-box",
-          background: "white",
           width: "100%",
           height: "100%"
         }}
       >
-        {item.name}
+        <Icon />
       </div>
     </animated.div>
   );
@@ -181,10 +196,10 @@ function Icon({ styles, item, onMove, onEnd }: ItemProps) {
 
 // potentially make these things dynamic by actually
 // measuring stuff and keeping it in state
-const containerWidth = 375 - 16;
+const containerWidth = 375 - 12 * 2;
 const bpr = 4;
 const containerHeight = 800;
-const rows = 6;
+const rows = 8;
 const rh = containerHeight / rows; // row height
 const cw = containerWidth / bpr; // column width
 

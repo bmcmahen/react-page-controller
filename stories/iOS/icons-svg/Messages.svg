@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60px" height="79px" viewBox="0 0 60 79" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>Messages</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#67FF81" offset="0%"></stop>
+            <stop stop-color="#01B41F" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Home" transform="translate(-28.000000, -28.000000)">
+            <g id="Messages" transform="translate(28.000000, 28.000000)">
+                <text id="Messages-" font-family="Helvetica" font-size="12" font-weight="normal" fill="#FFFFFF">
+                    <tspan x="2" y="76">Messages</tspan>
+                </text>
+                <g id="Messages-Icon">
+                    <path d="M39.0815,0 C45.105,0 48.116,0 51.3585,1.025 C54.8985,2.3135 57.6865,5.1015 58.975,8.6415 C60,11.8835 60,14.8955 60,20.9185 L60,39.0815 C60,45.105 60,48.116 58.975,51.3585 C57.6865,54.8985 54.8985,57.6865 51.3585,58.9745 C48.116,60 45.105,60 39.0815,60 L20.9185,60 C14.895,60 11.8835,60 8.6415,58.9745 C5.1015,57.6865 2.3135,54.8985 1.025,51.3585 C0,48.116 0,45.105 0,39.0815 L0,20.9185 C0,14.8955 0,11.8835 1.025,8.6415 C2.3135,5.1015 5.1015,2.3135 8.6415,1.025 C11.8835,0 14.895,0 20.9185,0 L39.0815,0 Z" id="Background" fill="url(#linearGradient-1)"></path>
+                    <path d="M25.706299,47.1526062 C24.4828567,47.0341141 23.7564303,47.1474057 22.5024414,47.5352783 C21,48 18.6784668,50 15.5,50 C15.3215332,50 18.4999997,47.4377441 18.5000001,45.5 C18.5000002,45.2427642 18.5000003,45.0141737 18.5000003,44.8111564 C12.2009014,41.6008914 8,35.8324098 8,29.25 C8,19.1708028 17.8497349,11 30,11 C42.1502651,11 52,19.1708028 52,29.25 C52,39.3291972 42.1502651,47.5 30,47.5 C28.530675,47.5 27.0949927,47.3805107 25.7063038,47.152607 Z" fill="#FFFFFF"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

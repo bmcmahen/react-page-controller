@@ -8,6 +8,7 @@ import {
 import { animated, useSpring, SpringConfig } from "react-spring";
 import { useMeasure } from "./use-measure";
 import { RemoveScroll } from "react-remove-scroll";
+import { usePrevious } from "./use-previous";
 
 /**
  * ReactGestureView
@@ -20,6 +21,7 @@ export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   value: number;
   enableMouse?: boolean;
   enableGestures?: boolean;
+  focusOnChange?: boolean;
   enableScrollLock?: boolean;
   onRequestChange: (value: number) => void;
   animationConfig?: SpringConfig;
@@ -59,6 +61,7 @@ const GestureView: React.RefForwardingComponent<
     id,
     value: index,
     onRequestChange,
+    focusOnChange = true,
     enableScrollLock = true,
     enableGestures = true,
     enableMouse = false,
@@ -83,14 +86,29 @@ const GestureView: React.RefForwardingComponent<
     new Map()
   );
 
+  const previousIndex = usePrevious(index);
+  const shouldFocusRef = React.useRef<number | null>(null);
+
+  React.useEffect(() => {
+    if (typeof previousIndex === "number" && previousIndex !== index) {
+      shouldFocusRef.current = index;
+    } else {
+      shouldFocusRef.current = null;
+    }
+  }, [previousIndex, index]);
+
+  function focusByIndex(i: number) {
+    const el = childrenRefs.current.get(i);
+    if (el) {
+      el.focus();
+    }
+  }
+
   // expose an imperative focus function which focuses
   // the currently active index
   React.useImperativeHandle(ref, () => ({
     focus: (i?: number) => {
-      const el = childrenRefs.current.get(i || index);
-      if (el) {
-        el.focus();
-      }
+      focusByIndex(i || index);
     }
   }));
 
@@ -98,6 +116,16 @@ const GestureView: React.RefForwardingComponent<
     x: index * -100,
     config: animationConfig
   }));
+
+  /**
+   * Potentially autofocus after our animation
+   */
+
+  function onRest() {
+    if (typeof shouldFocusRef.current === "number") {
+      focusByIndex(shouldFocusRef.current);
+    }
+  }
 
   const renderableChildren = children.filter(child => child !== null);
 
@@ -148,7 +176,10 @@ const GestureView: React.RefForwardingComponent<
 
   // animate into position if our index changes
   React.useEffect(() => {
-    set({ x: index * -100 });
+    set({
+      x: index * -100,
+      onRest
+    });
     loaded.add(index);
   }, [index]);
 
@@ -171,7 +202,7 @@ const GestureView: React.RefForwardingComponent<
       }
     } else {
       // return back!
-      set({ x: index * -100 });
+      set({ x: index * -100, onRest });
     }
   }
 
@@ -244,7 +275,8 @@ const GestureView: React.RefForwardingComponent<
 
         set({
           x: xPos,
-          immediate: true
+          immediate: true,
+          onRest: () => {}
         });
 
         // lazy load the item we are swiping towards

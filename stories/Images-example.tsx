@@ -28,6 +28,29 @@ export function ImagesExample() {
     }
   ];
 
+  function onKeyDown(e: KeyboardEvent) {
+    // left
+    if (e.keyCode === 37) {
+      if (index > 0) {
+        setIndex(index - 1);
+        return true;
+      }
+
+      // right
+    } else if (e.keyCode === 39) {
+      if (index < images.length - 1) {
+        setIndex(index + 1);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  React.useEffect(() => {
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [index]);
+
   return (
     <GestureView
       lazyLoad
@@ -51,8 +74,15 @@ export function ImagesExample() {
       onRequestChange={i => setIndex(i)}
       enableMouse
     >
-      {images.map(image => (
+      {images.map((image, i) => (
         <div key={image.src} style={{ flex: 1, overflow: "hidden" }}>
+          <button
+            onClick={() => {
+              setIndex(i + 1);
+            }}
+          >
+            next
+          </button>
           <img
             onDragStart={e => e.preventDefault()}
             style={{

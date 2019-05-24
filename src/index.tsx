@@ -61,7 +61,7 @@ const GestureView: React.RefForwardingComponent<
     id,
     value: index,
     onRequestChange,
-    focusOnChange = true,
+    focusOnChange = false,
     enableScrollLock = true,
     enableGestures = true,
     enableMouse = false,
@@ -334,7 +334,8 @@ const GestureView: React.RefForwardingComponent<
               justifyContent: "flex-start",
               flexShrink: 0,
               height: "100%",
-              overflow: "hidden"
+              overflow: "hidden",
+              outline: "none"
             };
 
             const props = {

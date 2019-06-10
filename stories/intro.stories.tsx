@@ -4,7 +4,6 @@ import GestureView, { CallbackProps, GestureViewHandles } from "../src";
 import { StateType } from "pan-responder-hook";
 
 import { useTouchable } from "touchable-hook";
-import { IOS } from "./iOS";
 import { ImagesExample } from "./Images-example";
 import { ScrollingExample } from "./Scrolling-example";
 import { FilterExample } from "./Filter-example";
@@ -27,7 +26,6 @@ storiesOf("react-gesture-view", module)
   .add("initial index", () => <ControlledExample defaultIndex={1} />)
   .add("lazy loading", () => <LazyExample />)
   .add("disable gestures", () => <DisabledExample />)
-  .add("iphone example", () => <IOS />)
   .add("images example", () => <ImagesExample />)
   .add("scrolling example", () => <ScrollingExample />)
   .add("filtering null children", () => <FilterExample />);

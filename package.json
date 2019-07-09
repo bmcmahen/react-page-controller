@@ -1,6 +1,6 @@
 {
   "name": "react-gesture-view",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "horizontal, swipeable gesture views for react",
   "main": "cjs/index.js",
   "module": "esm/index.js",

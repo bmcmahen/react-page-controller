@@ -73,7 +73,7 @@
     "@types/classnames": "^2.2.7",
     "@types/react": "^16.8.10",
     "@types/react-dom": "^16.8.3",
-    "react-remove-scroll": "^1.0.8",
+    "react-remove-scroll": "^2.0.4",
     "react-spring": "^9.0.0-beta.20",
     "resize-observer-polyfill": "^1.5.1",
     "tslib": "^1.9.3"

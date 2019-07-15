@@ -1,5 +1,5 @@
 import * as React from "react";
-import GestureView, { CallbackProps, GestureViewHandles } from "../src";
+import Pager, { CallbackProps, PagerHandles } from "../src";
 import "./images.css";
 
 export function ScrollingExample() {
@@ -18,7 +18,7 @@ export function ScrollingExample() {
 
   return (
     <div style={{ height: "150vh" }}>
-      <GestureView
+      <Pager
         lazyLoad
         style={{
           width: "300px",
@@ -39,7 +39,7 @@ export function ScrollingExample() {
             <p>{item.content}</p>
           </div>
         ))}
-      </GestureView>
+      </Pager>
     </div>
   );
 }

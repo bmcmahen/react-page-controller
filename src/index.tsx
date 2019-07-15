@@ -81,7 +81,6 @@ const GestureView: React.RefForwardingComponent<
     () => new Set(onSetLazy ? onSetLazy(index) : [index])
   );
   const { width } = useMeasure(containerRef);
-  const initialDirection = React.useRef<"vertical" | "horizontal" | null>(null);
   const childrenRefs = React.useRef<Map<number, HTMLDivElement | null>>(
     new Map()
   );
@@ -239,24 +238,16 @@ const GestureView: React.RefForwardingComponent<
         if (!enableGestures) {
           return false;
         }
-        initialDirection.current = null;
+
         return false;
       },
       onMoveShouldSet: (state, e) => {
-        const { initial, xy } = state;
+        const { initial, xy, initialDirection } = state;
         if (!enableGestures) {
           return false;
         }
 
-        const gestureDirection =
-          initialDirection.current || getDirection(initial, xy);
-
-        if (!initialDirection.current) {
-          initialDirection.current = gestureDirection;
-        }
-
-        // only set when our initial direction is horizontal
-        const set = gestureDirection === "horizontal";
+        const set = initialDirection[0] != 0;
 
         // allow the user to tap into this component to potentially
         // override it
@@ -291,11 +282,9 @@ const GestureView: React.RefForwardingComponent<
     }
   );
 
-  console.log("IS isDragging", isDragging);
-
   return (
     <React.Fragment>
-      <RemoveScroll inert={false} enabled={isDragging && enableScrollLock}>
+      <RemoveScroll enabled={isDragging && enableScrollLock}>
         <div />
       </RemoveScroll>
 
@@ -368,33 +357,6 @@ const GestureView: React.RefForwardingComponent<
 };
 
 export default React.forwardRef(GestureView);
-
-/**
- * Compare two positions and determine the direction
- * the gesture is moving (horizontal or vertical)
- *
- * If the difference is the same, return null. This happends
- * when only a click is registered.
- *
- * @param initial
- * @param xy
- */
-
-function getDirection(initial: [number, number], xy: [number, number]) {
-  const xDiff = Math.abs(initial[0] - xy[0]);
-  const yDiff = Math.abs(initial[1] - xy[1]);
-
-  // just a regular click
-  if (xDiff === yDiff) {
-    return null;
-  }
-
-  if (xDiff > yDiff) {
-    return "horizontal";
-  }
-
-  return "vertical";
-}
 
 /**
  * Add some resistance when swiping in a direction

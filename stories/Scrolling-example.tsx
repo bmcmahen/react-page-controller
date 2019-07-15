@@ -33,9 +33,7 @@ export function ScrollingExample() {
           <div
             key={item.content}
             style={{
-              flex: 1,
-              WebkitOverflowScrolling: "touch",
-              overflow: "auto"
+              flex: 1
             }}
           >
             <p>{item.content}</p>

@@ -85,7 +85,7 @@ const Pager: React.RefForwardingComponent<PagerHandles, PagerProps> = (
   const previousIndex = usePrevious(index);
   const shouldFocusRef = React.useRef<number | null>(null);
 
-  useScrollLock(isDragging && enableScrollLock, containerRef);
+  useScrollLock(isDragging && enableScrollLock);
 
   React.useEffect(() => {
     if (typeof previousIndex === "number" && previousIndex !== index) {

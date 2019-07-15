@@ -8,18 +8,6 @@ export function ScrollingExample() {
   const content = [
     {
       content:
-        "Sint adipisicing dolore fugiat sint ut mollit laboris nisi minim et. Nostrud aliquip ipsum magna ipsum anim nostrud nisi minim duis non. Consectetur dolor do in quis incididunt eu ipsum fugiat laborum minim. Velit nostrud commodo Lorem minim exercitation esse labore esse enim sunt cillum do enim. Exercitation nisi laborum veniam id veniam sunt et qui ad consequat."
-    },
-    {
-      content:
-        "Ad cupidatat reprehenderit officia aliqua nostrud ipsum occaecat eu nisi non."
-    },
-    {
-      content:
-        "Id id in occaecat officia id ut. Sint anim officia ut dolore qui sint in voluptate fugiat nostrud non. Occaecat velit officia sunt aute in. Minim fugiat elit laboris tempor fugiat veniam qui. Proident veniam quis voluptate consectetur tempor excepteur exercitation duis excepteur exercitation non."
-    },
-    {
-      content:
         "Eu magna culpa reprehenderit minim veniam culpa in exercitation aliqua laboris elit laboris occaecat consequat."
     },
     {
@@ -29,22 +17,31 @@ export function ScrollingExample() {
   ];
 
   return (
-    <GestureView
-      lazyLoad
-      style={{
-        width: "300px",
-        height: "500px",
-        border: "1px solid #eee"
-      }}
-      value={index}
-      onRequestChange={i => setIndex(i)}
-      enableMouse
-    >
-      {content.map(item => (
-        <div key={item.content} style={{ flex: 1, overflow: "auto" }}>
-          <p>{item.content}</p>
-        </div>
-      ))}
-    </GestureView>
+    <div style={{ height: "150vh" }}>
+      <GestureView
+        lazyLoad
+        style={{
+          width: "300px",
+          height: "500px",
+          border: "1px solid #eee"
+        }}
+        value={index}
+        onRequestChange={i => setIndex(i)}
+        enableMouse
+      >
+        {content.map(item => (
+          <div
+            key={item.content}
+            style={{
+              flex: 1,
+              WebkitOverflowScrolling: "touch",
+              overflow: "auto"
+            }}
+          >
+            <p>{item.content}</p>
+          </div>
+        ))}
+      </GestureView>
+    </div>
   );
 }

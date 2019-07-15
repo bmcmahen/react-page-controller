@@ -291,13 +291,14 @@ const GestureView: React.RefForwardingComponent<
     }
   );
 
+  console.log("IS isDragging", isDragging);
+
   return (
     <React.Fragment>
-      {isDragging && enableScrollLock && (
-        <RemoveScroll>
-          <div />
-        </RemoveScroll>
-      )}
+      <RemoveScroll inert={false} enabled={isDragging && enableScrollLock}>
+        <div />
+      </RemoveScroll>
+
       <div
         {...bind}
         ref={containerRef}

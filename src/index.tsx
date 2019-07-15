@@ -282,72 +282,70 @@ const Pager: React.RefForwardingComponent<PagerHandles, PagerProps> = (
   );
 
   return (
-    <React.Fragment>
-      <div
-        {...bind}
-        ref={containerRef}
-        className="Gesture-view"
+    <div
+      {...bind}
+      ref={containerRef}
+      className="Gesture-view"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        width: "100%",
+        ...style
+      }}
+      {...other}
+    >
+      <animated.div
+        className="Gesture-view__animated-container"
         style={{
+          flexDirection: "row",
+          direction: "ltr",
+          willChange: "transform",
+          minHeight: 0,
+          flex: 1,
           display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          width: "100%",
-          ...style
+          transform: x.interpolate(
+            x => `translateX(${taper(x, maxIndex * -100)}%)`
+          )
         }}
-        {...other}
       >
-        <animated.div
-          className="Gesture-view__animated-container"
-          style={{
-            flexDirection: "row",
-            direction: "ltr",
-            willChange: "transform",
-            minHeight: 0,
-            flex: 1,
+        {renderableChildren.map((child, i) => {
+          const styles: React.CSSProperties = {
             display: "flex",
-            transform: x.interpolate(
-              x => `translateX(${taper(x, maxIndex * -100)}%)`
-            )
-          }}
-        >
-          {renderableChildren.map((child, i) => {
-            const styles: React.CSSProperties = {
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-              alignSelf: "stretch",
-              justifyContent: "flex-start",
-              flexShrink: 0,
-              height: "100%",
-              overflow: "hidden",
-              outline: "none"
-            };
+            flexDirection: "column",
+            width: "100%",
+            alignSelf: "stretch",
+            justifyContent: "flex-start",
+            flexShrink: 0,
+            height: "100%",
+            overflow: "hidden",
+            outline: "none"
+          };
 
-            const props = {
-              key: i,
-              tabIndex: index === i ? 0 : -1,
-              style: styles,
-              "aria-hidden": i !== index,
-              ref: (el: HTMLDivElement | null) => {
-                childrenRefs.current!.set(i, el);
-              }
-            };
-
-            const load = !lazyLoad || index === i || loaded.has(i);
-
-            if (typeof child === "function") {
-              return child(props, index === i, load);
+          const props = {
+            key: i,
+            tabIndex: index === i ? 0 : -1,
+            style: styles,
+            "aria-hidden": i !== index,
+            ref: (el: HTMLDivElement | null) => {
+              childrenRefs.current!.set(i, el);
             }
+          };
 
-            return (
-              <div className="Gesture-view__pane" {...props}>
-                {load && child}
-              </div>
-            );
-          })}
-        </animated.div>
-      </div>
-    </React.Fragment>
+          const load = !lazyLoad || index === i || loaded.has(i);
+
+          if (typeof child === "function") {
+            return child(props, index === i, load);
+          }
+
+          return (
+            <div className="Gesture-view__pane" {...props}>
+              {load && child}
+            </div>
+          );
+        })}
+      </animated.div>
+    </div>
   );
 };
 

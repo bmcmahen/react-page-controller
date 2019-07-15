@@ -2,15 +2,15 @@
  <img 
     max-width="300px"
     alt="A demo showing views being swiped left and right."
-     src="https://raw.githubusercontent.com/bmcmahen/react-gesture-view/master/demo.gif">
+     src="https://raw.githubusercontent.com/bmcmahen/react-page-controller/master/demo.gif">
 </div>
 
-# react-gesture-view
+# react-page-controller
 
-[![npm package](https://img.shields.io/npm/v/react-gesture-view/latest.svg)](https://www.npmjs.com/package/react-gesture-view)
+[![npm package](https://img.shields.io/npm/v/react-page-controller/latest.svg)](https://www.npmjs.com/package/react-page-controller)
 [![Follow on Twitter](https://img.shields.io/twitter/follow/benmcmahen.svg?style=social&logo=twitter)](https://twitter.com/intent/follow?screen_name=benmcmahen)
 
-React-gesture-view is a react library for providing views that can be swiped left or right. It was originally built for use in [Sancho UI](https://github.com/bmcmahen/sancho).
+React-page-controller is a react library for providing views that can be swiped left or right. It was originally built for use in [Sancho UI](https://github.com/bmcmahen/sancho) and is inspired by the iOS library of the same name.
 
 ## Features
 
@@ -20,10 +20,10 @@ React-gesture-view is a react library for providing views that can be swiped lef
 
 ## Install
 
-Install `react-gesture-view` and its peer dependency `react-gesture-responder` using yarn or npm.
+Install `react-page-controller` and its peer dependency `react-gesture-responder` using yarn or npm.
 
 ```
-yarn add react-gesture-view react-gesture-responder
+yarn add react-page-controller react-gesture-responder
 ```
 
 ## Basic usage
@@ -31,17 +31,17 @@ yarn add react-gesture-view react-gesture-responder
 The gesture view should be provided with a collection of children, each representing a panel. By default, each child will be wrapped in an element wiith the recommended props. If you'd rather render the element yourself, provide a render callback for each child instead.
 
 ```jsx
-import GestureView from "react-gesture-view";
+import Pager from "react-page-controller";
 
 function TabContent() {
   const [index, setIndex] = React.useState(0);
   return (
-    <GestureView value={index} onRequestChange={i => setIndex(i)}>
+    <Pager value={index} onRequestChange={i => setIndex(i)}>
       <div>First panel</div>
       <div>Second panel</div>
       <div>Third panel</div>
       {(props, active, load) => <div {...props}>fourth panel</div>}
-    </GestureView>
+    </Pager>
   );
 }
 ```
@@ -74,27 +74,27 @@ function TabContent() {
   }
 
   return (
-    <GestureView ref={ref} value={index} onRequestChange={i => setIndex(i)}>
+    <Pager ref={ref} value={index} onRequestChange={i => setIndex(i)}>
       <div>First panel</div>
       <div>Second panel</div>
       <div>Third panel</div>
-    </GestureView>
+    </Pager>
   );
 }
 ```
 
 ## Embedding Views
 
-Each GestureView exposes the `react-gesture-responder` `onTerminationRequest` function which allows you to negotiate between gesture views competing for the responder. Typically, you'll want the child view to prevent the parent from claiming the responder.
+Each Pager exposes the `react-gesture-responder` `onTerminationRequest` function which allows you to negotiate between gesture views competing for the responder. Typically, you'll want the child view to prevent the parent from claiming the responder.
 
 ```jsx
-<GestureView>
+<Pager>
   <div>Left parent pane</div>
-  <GestureView onTerminationRequest={() => false}>
+  <Pager onTerminationRequest={() => false}>
     <div>child pane</div>
     <div>another child</div>
-  </GestureView>
-</GestureView>
+  </Pager>
+</Pager>
 ```
 
 The logic can become more sophisticated. In the gif at the top of the readme, our parent claims the responder (and prevents the child from stealing it) when showing the first child pane and moving left. The code will look something like this:
@@ -121,16 +121,16 @@ function onTerminationRequest(state) {
   return true;
 }
 
-<GestureView
+<Pager
   onMoveShouldSet={onMoveShouldSet}
   onTerminationRequest={onTerminationRequest}
   value={parentIndex}
   onRequestChange={i => setParentIndex(i)}
 >
   <div>Left parent pane</div>
-  <GestureView value={childIndex} onRequestChange={i => setChildIndex(i)}>
+  <Pager value={childIndex} onRequestChange={i => setChildIndex(i)}>
     <div>child pane</div>
     <div>another child</div>
-  </GestureView>
-</GestureView>;
+  </Pager>
+</Pager>;
 ```

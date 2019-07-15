@@ -7,16 +7,16 @@ import {
 } from "react-gesture-responder";
 import { animated, useSpring, SpringConfig } from "react-spring";
 import { useMeasure } from "./use-measure";
-import { RemoveScroll } from "react-remove-scroll";
+import useScrollLock from "use-scroll-lock";
 import { usePrevious } from "./use-previous";
 
 /**
- * ReactGestureView
+ * ReactPager
  *
  * Provide views that can be swiped left or right (with touch devices).
  */
 
-export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface PagerProps extends React.HTMLAttributes<HTMLDivElement> {
   children: Array<React.ReactNode | CallbackProps>;
   value: number;
   enableMouse?: boolean;
@@ -36,7 +36,7 @@ export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   ) => boolean;
 }
 
-export interface GestureViewHandles {
+export interface PagerHandles {
   focus(i?: number): void;
 }
 
@@ -46,16 +46,13 @@ export interface CallbackProps {
   ref: (el: HTMLDivElement | null) => void;
 }
 
-export type GestureViewChildCallback = (
+export type PagerChildCallback = (
   props: CallbackProps,
   active: boolean,
   load: boolean
 ) => React.ReactNode;
 
-const GestureView: React.RefForwardingComponent<
-  GestureViewHandles,
-  GestureViewProps
-> = (
+const Pager: React.RefForwardingComponent<PagerHandles, PagerProps> = (
   {
     children,
     id,
@@ -87,6 +84,8 @@ const GestureView: React.RefForwardingComponent<
 
   const previousIndex = usePrevious(index);
   const shouldFocusRef = React.useRef<number | null>(null);
+
+  useScrollLock(isDragging && enableScrollLock, containerRef);
 
   React.useEffect(() => {
     if (typeof previousIndex === "number" && previousIndex !== index) {
@@ -284,10 +283,6 @@ const GestureView: React.RefForwardingComponent<
 
   return (
     <React.Fragment>
-      <RemoveScroll enabled={isDragging && enableScrollLock}>
-        <div />
-      </RemoveScroll>
-
       <div
         {...bind}
         ref={containerRef}
@@ -356,7 +351,7 @@ const GestureView: React.RefForwardingComponent<
   );
 };
 
-export default React.forwardRef(GestureView);
+export default React.forwardRef(Pager);
 
 /**
  * Add some resistance when swiping in a direction

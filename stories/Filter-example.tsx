@@ -1,12 +1,12 @@
 import * as React from "react";
-import GestureView, { CallbackProps, GestureViewHandles } from "../src";
+import Pager, { CallbackProps, PagerHandles } from "../src";
 import "./images.css";
 
 export function FilterExample() {
   const [index, setIndex] = React.useState(0);
 
   return (
-    <GestureView
+    <Pager
       lazyLoad
       style={{
         width: "300px",
@@ -21,6 +21,6 @@ export function FilterExample() {
       <div>I should appear first</div>
       <div>I should appear last</div>
       {null}
-    </GestureView>
+    </Pager>
   );
 }

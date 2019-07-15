@@ -7,16 +7,16 @@ import {
 } from "react-gesture-responder";
 import { animated, useSpring, SpringConfig } from "react-spring";
 import { useMeasure } from "./use-measure";
-import { RemoveScroll } from "react-remove-scroll";
+import useScrollLock from "use-scroll-lock";
 import { usePrevious } from "./use-previous";
 
 /**
- * ReactGestureView
+ * ReactPager
  *
  * Provide views that can be swiped left or right (with touch devices).
  */
 
-export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface PagerProps extends React.HTMLAttributes<HTMLDivElement> {
   children: Array<React.ReactNode | CallbackProps>;
   value: number;
   enableMouse?: boolean;
@@ -36,7 +36,7 @@ export interface GestureViewProps extends React.HTMLAttributes<HTMLDivElement> {
   ) => boolean;
 }
 
-export interface GestureViewHandles {
+export interface PagerHandles {
   focus(i?: number): void;
 }
 
@@ -46,16 +46,13 @@ export interface CallbackProps {
   ref: (el: HTMLDivElement | null) => void;
 }
 
-export type GestureViewChildCallback = (
+export type PagerChildCallback = (
   props: CallbackProps,
   active: boolean,
   load: boolean
 ) => React.ReactNode;
 
-const GestureView: React.RefForwardingComponent<
-  GestureViewHandles,
-  GestureViewProps
-> = (
+const Pager: React.RefForwardingComponent<PagerHandles, PagerProps> = (
   {
     children,
     id,
@@ -81,13 +78,14 @@ const GestureView: React.RefForwardingComponent<
     () => new Set(onSetLazy ? onSetLazy(index) : [index])
   );
   const { width } = useMeasure(containerRef);
-  const initialDirection = React.useRef<"vertical" | "horizontal" | null>(null);
   const childrenRefs = React.useRef<Map<number, HTMLDivElement | null>>(
     new Map()
   );
 
   const previousIndex = usePrevious(index);
   const shouldFocusRef = React.useRef<number | null>(null);
+
+  useScrollLock(isDragging && enableScrollLock, containerRef);
 
   React.useEffect(() => {
     if (typeof previousIndex === "number" && previousIndex !== index) {
@@ -239,24 +237,16 @@ const GestureView: React.RefForwardingComponent<
         if (!enableGestures) {
           return false;
         }
-        initialDirection.current = null;
+
         return false;
       },
       onMoveShouldSet: (state, e) => {
-        const { initial, xy } = state;
+        const { initial, xy, initialDirection } = state;
         if (!enableGestures) {
           return false;
         }
 
-        const gestureDirection =
-          initialDirection.current || getDirection(initial, xy);
-
-        if (!initialDirection.current) {
-          initialDirection.current = gestureDirection;
-        }
-
-        // only set when our initial direction is horizontal
-        const set = gestureDirection === "horizontal";
+        const set = initialDirection[0] != 0;
 
         // allow the user to tap into this component to potentially
         // override it
@@ -292,108 +282,74 @@ const GestureView: React.RefForwardingComponent<
   );
 
   return (
-    <React.Fragment>
-      {isDragging && enableScrollLock && (
-        <RemoveScroll>
-          <div />
-        </RemoveScroll>
-      )}
-      <div
-        {...bind}
-        ref={containerRef}
-        className="Gesture-view"
+    <div
+      {...bind}
+      ref={containerRef}
+      className="Gesture-view"
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        width: "100%",
+        ...style
+      }}
+      {...other}
+    >
+      <animated.div
+        className="Gesture-view__animated-container"
         style={{
+          flexDirection: "row",
+          direction: "ltr",
+          willChange: "transform",
+          minHeight: 0,
+          flex: 1,
           display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          width: "100%",
-          ...style
+          transform: x.interpolate(
+            x => `translateX(${taper(x, maxIndex * -100)}%)`
+          )
         }}
-        {...other}
       >
-        <animated.div
-          className="Gesture-view__animated-container"
-          style={{
-            flexDirection: "row",
-            direction: "ltr",
-            willChange: "transform",
-            minHeight: 0,
-            flex: 1,
+        {renderableChildren.map((child, i) => {
+          const styles: React.CSSProperties = {
             display: "flex",
-            transform: x.interpolate(
-              x => `translateX(${taper(x, maxIndex * -100)}%)`
-            )
-          }}
-        >
-          {renderableChildren.map((child, i) => {
-            const styles: React.CSSProperties = {
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-              alignSelf: "stretch",
-              justifyContent: "flex-start",
-              flexShrink: 0,
-              height: "100%",
-              overflow: "hidden",
-              outline: "none"
-            };
+            flexDirection: "column",
+            width: "100%",
+            alignSelf: "stretch",
+            justifyContent: "flex-start",
+            flexShrink: 0,
+            height: "100%",
+            overflow: "hidden",
+            outline: "none"
+          };
 
-            const props = {
-              key: i,
-              tabIndex: index === i ? 0 : -1,
-              style: styles,
-              "aria-hidden": i !== index,
-              ref: (el: HTMLDivElement | null) => {
-                childrenRefs.current!.set(i, el);
-              }
-            };
-
-            const load = !lazyLoad || index === i || loaded.has(i);
-
-            if (typeof child === "function") {
-              return child(props, index === i, load);
+          const props = {
+            key: i,
+            tabIndex: index === i ? 0 : -1,
+            style: styles,
+            "aria-hidden": i !== index,
+            ref: (el: HTMLDivElement | null) => {
+              childrenRefs.current!.set(i, el);
             }
+          };
 
-            return (
-              <div className="Gesture-view__pane" {...props}>
-                {load && child}
-              </div>
-            );
-          })}
-        </animated.div>
-      </div>
-    </React.Fragment>
+          const load = !lazyLoad || index === i || loaded.has(i);
+
+          if (typeof child === "function") {
+            return child(props, index === i, load);
+          }
+
+          return (
+            <div className="Gesture-view__pane" {...props}>
+              {load && child}
+            </div>
+          );
+        })}
+      </animated.div>
+    </div>
   );
 };
 
-export default React.forwardRef(GestureView);
-
-/**
- * Compare two positions and determine the direction
- * the gesture is moving (horizontal or vertical)
- *
- * If the difference is the same, return null. This happends
- * when only a click is registered.
- *
- * @param initial
- * @param xy
- */
-
-function getDirection(initial: [number, number], xy: [number, number]) {
-  const xDiff = Math.abs(initial[0] - xy[0]);
-  const yDiff = Math.abs(initial[1] - xy[1]);
-
-  // just a regular click
-  if (xDiff === yDiff) {
-    return null;
-  }
-
-  if (xDiff > yDiff) {
-    return "horizontal";
-  }
-
-  return "vertical";
-}
+export default React.forwardRef(Pager);
 
 /**
  * Add some resistance when swiping in a direction

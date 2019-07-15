@@ -1,6 +1,6 @@
 import * as React from "react";
 import { storiesOf } from "@storybook/react";
-import GestureView, { CallbackProps, GestureViewHandles } from "../src";
+import Pager, { CallbackProps, PagerHandles } from "../src";
 import { StateType } from "pan-responder-hook";
 
 import { useTouchable } from "touchable-hook";
@@ -112,14 +112,14 @@ function BasicExample({
   value,
   children
 }: any) {
-  const ref = React.useRef<GestureViewHandles>(null);
+  const ref = React.useRef<PagerHandles>(null);
 
   React.useEffect(() => {
     ref.current!.focus();
   }, []);
 
   return (
-    <GestureView
+    <Pager
       ref={ref}
       value={value}
       enableGestures={enableGestures}
@@ -158,14 +158,14 @@ function BasicExample({
       >
         {children}
       </div>
-    </GestureView>
+    </Pager>
   );
 }
 
 function LazyExample() {
   const [index, setIndex] = React.useState(0);
   return (
-    <GestureView
+    <Pager
       lazyLoad
       value={index}
       onRequestChange={i => setIndex(i)}
@@ -186,7 +186,7 @@ function LazyExample() {
       <div style={{ flex: 1, background: "green" }}>
         <RandomContent />
       </div>
-    </GestureView>
+    </Pager>
   );
 }
 

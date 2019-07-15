@@ -1,5 +1,5 @@
 import * as React from "react";
-import GestureView, { CallbackProps, GestureViewHandles } from "../src";
+import Pager, { CallbackProps, PagerHandles } from "../src";
 import "./images.css";
 
 export function ImagesExample() {
@@ -52,7 +52,7 @@ export function ImagesExample() {
   }, [index]);
 
   return (
-    <GestureView
+    <Pager
       lazyLoad
       onSetLazy={i => {
         const indexes = [i];
@@ -97,6 +97,6 @@ export function ImagesExample() {
           />
         </div>
       ))}
-    </GestureView>
+    </Pager>
   );
 }

@@ -1,6 +1,6 @@
 {
   "name": "react-page-controller",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "horizontal, swipeable panes built for react",
   "main": "cjs/index.js",
   "module": "esm/index.js",

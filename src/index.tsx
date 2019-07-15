@@ -241,12 +241,13 @@ const Pager: React.RefForwardingComponent<PagerHandles, PagerProps> = (
         return false;
       },
       onMoveShouldSet: (state, e) => {
-        const { initial, xy, initialDirection } = state;
+        const { xy, initialDirection } = state;
         if (!enableGestures) {
           return false;
         }
 
-        const set = initialDirection[0] != 0;
+        const set =
+          Math.abs(initialDirection[0]) > Math.abs(initialDirection[1]);
 
         // allow the user to tap into this component to potentially
         // override it

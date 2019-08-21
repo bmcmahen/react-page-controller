@@ -48,17 +48,17 @@ function TabContent() {
 
 ## API
 
-| Name                 | Type                              | Default Value                             | Description                                                                                             |
-| -------------------- | --------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| value\*              | number                            |                                           | The current index to show                                                                               |
-| onRequestChange\*    | (value: number) => void;          |                                           | A callback for handling index changes                                                                   |
-| lazyLoad             | boolean                           | false                                     | Lazy load pane contents                                                                                 |
-| enableMouse          | boolean                           | false                                     | By default mouse gestures are not enabled                                                               |
-| enableGestures       | boolean                           | true                                      | By default gestures are enabled                                                                         |
-| animationConfig      | SpringConfig                      | { tension: 190, friction: 20, mass: 0.4 } | A react-spring config for animations                                                                    |
-| onTerminationRequest | (state) => boolean;               |                                           | Optionally prevent parent views from claiming the pan-responder. Useful for embedded gesture views      |
-| onMoveShouldSet      | (state, e, suggested) => boolean; |                                           | Optionally override the default onMoveShouldSet behaviour. Useful for embedding multiple gesture views. |
-| enableScrollLock     | boolean                           | true                                      | Lock all page scrolling when making swiping gestures. This is generally the desired behaviour.          |
+| Name                 | Type                                            | Default Value                             | Description                                                                                             |
+| -------------------- | ----------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| value\*              | number \| { index: number, immediate: boolean } |                                           | The current index to show                                                                               |
+| onRequestChange\*    | (value: number) => void;                        |                                           | A callback for handling index changes                                                                   |
+| lazyLoad             | boolean                                         | false                                     | Lazy load pane contents                                                                                 |
+| enableMouse          | boolean                                         | false                                     | By default mouse gestures are not enabled                                                               |
+| enableGestures       | boolean                                         | true                                      | By default gestures are enabled                                                                         |
+| animationConfig      | SpringConfig                                    | { tension: 190, friction: 20, mass: 0.4 } | A react-spring config for animations                                                                    |
+| onTerminationRequest | (state) => boolean;                             |                                           | Optionally prevent parent views from claiming the pan-responder. Useful for embedded gesture views      |
+| onMoveShouldSet      | (state, e, suggested) => boolean;               |                                           | Optionally override the default onMoveShouldSet behaviour. Useful for embedding multiple gesture views. |
+| enableScrollLock     | boolean                                         | true                                      | Lock all page scrolling when making swiping gestures. This is generally the desired behaviour.          |
 
 ## Imperative API
 

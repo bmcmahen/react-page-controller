@@ -10,6 +10,13 @@ import { useMeasure } from "./use-measure";
 import useScrollLock from "use-scroll-lock";
 import { usePrevious } from "./use-previous";
 
+export interface PagerIndexObject {
+  index: number;
+  immediate: boolean;
+}
+
+export type PagerIndex = number | PagerIndexObject;
+
 /**
  * ReactPager
  *
@@ -18,7 +25,7 @@ import { usePrevious } from "./use-previous";
 
 export interface PagerProps extends React.HTMLAttributes<HTMLDivElement> {
   children: Array<React.ReactNode | CallbackProps>;
-  value: number;
+  value: PagerIndex;
   enableMouse?: boolean;
   enableGestures?: boolean;
   focusOnChange?: boolean;
@@ -56,7 +63,7 @@ const Pager: React.RefForwardingComponent<PagerHandles, PagerProps> = (
   {
     children,
     id,
-    value: index,
+    value: providedIndex,
     onRequestChange,
     focusOnChange = false,
     enableScrollLock = true,
@@ -72,6 +79,11 @@ const Pager: React.RefForwardingComponent<PagerHandles, PagerProps> = (
   },
   ref
 ) => {
+  let { immediate, index } =
+    typeof providedIndex === "number"
+      ? { immediate: false, index: providedIndex }
+      : providedIndex;
+
   const containerRef = React.useRef(null);
   const [isDragging, setIsDragging] = React.useState(false);
   const [loaded, setLoaded] = React.useState(
@@ -176,10 +188,11 @@ const Pager: React.RefForwardingComponent<PagerHandles, PagerProps> = (
   React.useEffect(() => {
     set({
       x: index * -100,
-      onRest
+      onRest,
+      immediate
     });
     loaded.add(index);
-  }, [index]);
+  }, [index, immediate]);
 
   /**
    * Handle gesture end event (either touchend

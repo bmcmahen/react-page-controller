@@ -3,7 +3,7 @@ import Pager, { CallbackProps, PagerHandles } from "../src";
 import "./images.css";
 
 export function ImagesExample() {
-  const [index, setIndex] = React.useState(0);
+  const [index, setIndex] = React.useState({ index: 0, immediate: false });
 
   const images = [
     {
@@ -31,15 +31,15 @@ export function ImagesExample() {
   function onKeyDown(e: KeyboardEvent) {
     // left
     if (e.keyCode === 37) {
-      if (index > 0) {
-        setIndex(index - 1);
+      if (index.index > 0) {
+        setIndex({ index: index.index - 1, immediate: false });
         return true;
       }
 
       // right
     } else if (e.keyCode === 39) {
-      if (index < images.length - 1) {
-        setIndex(index + 1);
+      if (index.index < images.length - 1) {
+        setIndex({ index: index.index + 1, immediate: false });
         return true;
       }
     }
@@ -71,17 +71,17 @@ export function ImagesExample() {
         height: "600px"
       }}
       value={index}
-      onRequestChange={i => setIndex(i)}
+      onRequestChange={i => setIndex({ index: i, immediate: false })}
       enableMouse
     >
       {images.map((image, i) => (
         <div key={image.src} style={{ flex: 1, overflow: "hidden" }}>
           <button
             onClick={() => {
-              setIndex(i + 1);
+              setIndex({ index: i + 1, immediate: true });
             }}
           >
-            next
+            next immediate
           </button>
           <img
             onDragStart={e => e.preventDefault()}
